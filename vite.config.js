@@ -3,6 +3,14 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '',
   plugins: [vue()],
-  base: 'sibaper_frontend',
+  resolve: {
+    alias: [
+      {
+        find: /^@\/(.+)/,
+        replacement: path.resolve(__dirname, 'src') + '/$1',
+      },
+    ],
+  },
 })
