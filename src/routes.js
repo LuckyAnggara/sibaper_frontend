@@ -1,5 +1,6 @@
 // IMPORT HALAMAN
 import Home from './views/Home.vue'
+import Permintaan from './views/Permintaan.vue'
 import Table from './views/component/Table.vue'
 import Login from './views/Login.vue'
 import NotFound from './views/NotFound.vue'
@@ -10,21 +11,33 @@ export const routes = [
   {
     path: '/home',
     name: 'home',
-    component: Home,
+    component: Table,
     meta: {
       title: 'Informasi Persediaan',
-      layout: 'full',
+      layout: 'layout-normal',
     },
   },
-  { path: '/login', name: 'login', component: Login },
+  {
+    path: '/permintaan',
+    name: 'permintaan',
+    component: Permintaan,
+    meta: {
+      title: 'Form Permintaan Barang Persediaan',
+      layout: 'layout-normal',
+    },
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login,
+    meta: {
+      title: 'Login',
+      layout: 'layout-full',
+    },
+  },
   {
     path: '/',
-    name: '/',
-    component: Home,
-    meta: {
-      title: 'Informasi Persediaan',
-      layout: 'full',
-    },
+    redirect: { name: 'home' },
   },
   { path: '/:path(.*)', name: 'not-found', component: NotFound },
 ]

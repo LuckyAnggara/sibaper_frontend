@@ -6,19 +6,20 @@
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <img class="h-8" src="../assets/logo.png" alt="Workflow" />
+              <img class="h-8" src="../../assets/logo.png" alt="Workflow" />
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
                 <button
+                  @click="home"
                   :class="[
-                    currentRouteName == 'home' || '/'
+                    currentRouteName === 'home'
                       ? 'bg-gray-900 text-white'
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                     'px-3 py-2 rounded-md text-sm font-medium',
                   ]"
                   :aria-current="
-                    currentRouteName == 'home' || '/' ? 'page' : undefined
+                    currentRouteName === 'home' ? 'page' : undefined
                   "
                 >
                   Home
@@ -108,7 +109,7 @@
               :to="{
                 name: 'login',
               }"
-              class="text-black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              class="text-white bg-black hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Login
             </router-link>
@@ -149,7 +150,7 @@
             <div class="flex-shrink-0">
               <img
                 class="h-10 w-10 rounded-full"
-                src="./src/assets/avatar.png"
+                src="../../assets/avatar.png"
                 alt=""
               />
             </div>
@@ -191,116 +192,18 @@
     <main>
       <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 content-start">
         <!-- Replace with your content -->
-        <Table />
-        <Login />
+        <router-view />
         <!-- /End replace -->
       </div>
     </main>
   </div>
   <vue-final-modal
     v-model="showModal"
+    name="loginModal"
     classes="flex justify-center items-center"
     content-class="relative p-4 w-full max-w-md h-full md:h-auto"
   >
-    <!-- Main modal -->
-
-    <!-- Modal content -->
-    <!-- Modal content -->
-    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-      <div class="flex justify-end p-2">
-        <button
-          @click="showModal = false"
-          type="button"
-          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-          data-modal-toggle="authentication-modal"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-        </button>
-      </div>
-      <form class="px-6 pb-4 space-y-6 lg:px-8 sm:pb-6 xl:pb-8" action="#">
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-          Login untuk melanjutkan
-        </h3>
-        <div>
-          <label
-            for="nip"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >NIP</label
-          >
-          <input
-            type="number"
-            v-model="nip"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-            placeholder="Nomor Induk Pegawai"
-            required
-          />
-        </div>
-        <div>
-          <label
-            for="password"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >Password</label
-          >
-          <input
-            type="password"
-            v-model="password"
-            placeholder="••••••••"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-            required
-          />
-        </div>
-        <button
-          v-if="loginLoading"
-          disabled
-          type="button"
-          class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          <svg
-            role="status"
-            class="inline mr-3 w-4 h-4 text-white animate-spin"
-            viewBox="0 0 100 101"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-              fill="#E5E7EB"
-            />
-            <path
-              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-              fill="currentColor"
-            />
-          </svg>
-          Loading...
-        </button>
-
-        <button
-          v-else
-          @click="login"
-          type="submit"
-          class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Login
-        </button>
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-          Belum punya akun?
-          <a href="#" class="text-blue-700 hover:underline dark:text-blue-500"
-            >Buat akun</a
-          >
-        </div>
-      </form>
-    </div>
+    <Login-Modal />
   </vue-final-modal>
 </template>
 
@@ -315,10 +218,10 @@ import {
   MenuItems,
 } from '@headlessui/vue'
 import { RouterLink } from 'vue-router'
-
+import { VueFinalModal, $vfm } from 'vue-final-modal'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
-import { VueFinalModal } from 'vue-final-modal'
-import Table from './component/Table.vue'
+
+import LoginModal from '../component/LoginModal.vue'
 
 const user = {
   name: 'Tom Cook',
@@ -338,7 +241,7 @@ const userNavigation = [
 
 export default {
   components: {
-    Table,
+    LoginModal,
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
@@ -355,9 +258,6 @@ export default {
   data() {
     return {
       showModal: false,
-      loginLoading: false,
-      nip: null,
-      password: null,
     }
   },
   computed: {
@@ -368,76 +268,33 @@ export default {
       return this.$route.meta.title
     },
     userData() {
-      return localStorage.getItem('userData')
+      return this.$store.getters['app-user/getUserData']
     },
   },
   methods: {
+    openLoginModal() {
+      this.$vfm.show('loginModal')
+    },
+    home() {
+      this.$router.push({ name: 'home' })
+    },
     permintaan() {
-      if (!this.userData) this.showModal = true
+      if (!this.userData) this.openLoginModal()
+      else this.$router.push({ name: 'permintaan' })
     },
     logout() {
-      console.info('aaa')
       localStorage.removeItem('userData')
       localStorage.removeItem('token')
+      this.$store.commit('app-user/SET_USER_DATA')
+      this.$store.commit('app-user/SET_TOKEN')
       // Redirect to login page
-      this.$router.push({ name: 'login' })
-    },
-    successLogin() {
-      this.$toast.open({
-        message: `Selamat datanng ${userData.name}`,
-        type: 'success',
-        duration: 3000,
-        position: 'top-right',
-        dismissible: true,
-      })
-    },
-    errorNipPwEmpty() {
-      this.$toast.open({
-        message: 'NIP dan Password diperlukan',
-        type: 'error',
-        duration: 2000,
-        position: 'top',
-        dismissible: true,
-      })
-    },
-    login() {
-      const data = {
-        nip: this.nip,
-        password: this.password,
-      }
-      this.loginLoading = !this.loginLoading
-      this.$axios
-        .post(`/login`, data)
-        .then((response) => {
-          if (response.status == 200) {
-            this.$axios
-              .get(`/profile`, {
-                headers: {
-                  Authorization: `${response.data.token_type} ${response.data.access_token}`,
-                },
-              })
-              .then((res) => {
-                localStorage.setItem('token', JSON.stringify(response.data))
-                this.loginLoading = !this.loginLoading
-                this.successLogin()
-                localStorage.setItem('userData', JSON.stringify(res.data))
-                this.showModal = false
-              })
-          } else if (response.status == 401) {
-            console.info('aaa')
-          }
-          // get data profile setelah dapat token login
-        })
-        .catch((e) => {
-          const error = e.toJSON()
-          if (error.status == '401') {
-            this.errorNipPwEmpty()
-          }
-          this.loginLoading = !this.loginLoading
-        })
+      this.$router.push({ name: 'home' })
     },
   },
-  created() {},
+  created() {
+    this.$store.commit('app-user/SET_USER_DATA')
+    this.$store.commit('app-user/SET_TOKEN')
+  },
   setup() {
     return {
       user,

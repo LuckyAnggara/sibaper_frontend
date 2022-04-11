@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-white py-10">
+  <section class="py-10">
     <template v-if="!isLoading">
       <div class="text-center">
         <svg
@@ -71,22 +71,33 @@
             class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
           >
             <thead
-              class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+              class="text-xs text-gray-700 uppercase bg-gray-300 dark:bg-gray-700 dark:text-gray-400"
             >
               <tr>
+                <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
                 <th scope="col" class="px-6 py-3" style="width: 60%">
                   Nama Barang Persediaan
                 </th>
-                <th scope="col" class="px-6 py-3">Saldo Akhir</th>
-                <th scope="col" class="px-6 py-3">Terakhir Keluar</th>
+                <th scope="col" class="px-6 py-3" style="width: 15%">
+                  Saldo Akhir
+                </th>
+                <th scope="col" class="px-6 py-3" style="width: 20%">
+                  Terakhir Keluar
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr
                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                v-for="item in dataTable.data"
+                v-for="(item, index) in dataTable.data"
                 :key="item.id"
               >
+                <th
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                >
+                  {{ dataTable.from + index }}
+                </th>
                 <th
                   scope="row"
                   class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
@@ -179,7 +190,9 @@ export default {
       dataTable: null,
       limitPage: [5, 10, 25, 100],
       limit:
-        localStorage.getItem('limit') == '' ? 5 : localStorage.getItem('limit'),
+        localStorage.getItem('limit') === ('' || null)
+          ? 5
+          : localStorage.getItem('limit'),
       isLoading: true,
       error: false,
     }
@@ -192,16 +205,15 @@ export default {
   },
   methods: {
     getData() {
-      console.info(this.limit)
       this.isLoading = !this.isLoading
 
       this.$axios
         .get(`/product?limit=${this.limit}`)
-        .then((res) => {
+        .then(res => {
           this.isLoading = !this.isLoading
           this.dataTable = res.data.data
         })
-        .catch((e) => {
+        .catch(e => {
           this.isLoading = !this.isLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -215,7 +227,7 @@ export default {
 
       this.$axios
         .get(`${this.dataTable.next_page_url}&limit=${this.limit}`)
-        .then((res) => {
+        .then(res => {
           this.isLoading = !this.isLoading
           this.dataTable = res.data.data
         })
@@ -225,7 +237,7 @@ export default {
 
       this.$axios
         .get(`${this.dataTable.prev_page_url}&limit=${this.limit}`)
-        .then((res) => {
+        .then(res => {
           this.isLoading = !this.isLoading
           this.dataTable = res.data.data
         })

@@ -15,7 +15,8 @@
     "vue": "^3.2.25",
     "vue-final-modal": "^3.4.3",
     "vue-router": "^4.0.14",
-    "vue-toast-notification": "^3.0.0"
+    "vue-toast-notification": "^3.0.0",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.0",

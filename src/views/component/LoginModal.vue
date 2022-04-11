@@ -1,8 +1,8 @@
 <template>
   <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
     <div class="flex justify-end p-2">
-      <!-- <button
-        @click="showModal = false"
+      <button
+        @click="this.$vfm.hide('loginModal')"
         type="button"
         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
         data-modal-toggle="authentication-modal"
@@ -19,7 +19,7 @@
             clip-rule="evenodd"
           ></path>
         </svg>
-      </button> -->
+      </button>
     </div>
     <form class="px-6 pb-4 space-y-6 lg:px-8 sm:pb-6 xl:pb-8" action="#">
       <h3 class="text-xl font-medium text-gray-900 dark:text-white">
@@ -105,10 +105,15 @@ export default {
       password: null,
     }
   },
+  computed: {
+    userData() {
+      return this.$store.getters['app-user/getUserData']
+    },
+  },
   methods: {
     successLogin() {
       this.$toast.open({
-        message: `Selamat datang ${userData.name}`,
+        message: `Selamat datang ${this.userData.name}`,
         type: 'success',
         duration: 3000,
         position: 'top-right',
@@ -117,7 +122,7 @@ export default {
     },
     errorNipPwEmpty() {
       this.$toast.open({
-        message: 'NIP dan Password diperlukan',
+        message: 'NIP dan Password salah',
         type: 'error',
         duration: 2000,
         position: 'top',
@@ -132,7 +137,7 @@ export default {
       this.loginLoading = !this.loginLoading
       this.$axios
         .post(`/login`, data)
-        .then((response) => {
+        .then(response => {
           if (response.status == 200) {
             this.$axios
               .get(`/profile`, {
@@ -140,19 +145,25 @@ export default {
                   Authorization: `${response.data.token_type} ${response.data.access_token}`,
                 },
               })
-              .then((res) => {
-                localStorage.setItem('token', JSON.stringify(response.data))
+              .then(res => {
                 this.loginLoading = !this.loginLoading
-                this.successLogin()
+                //SET DATA KE DALAM LOCAL STORAGE
+                localStorage.setItem('token', JSON.stringify(response.data))
                 localStorage.setItem('userData', JSON.stringify(res.data))
-                this.showModal = false
+
+                // UPDATE MUTATION STATE VUEX
+                this.$store.commit('app-user/SET_USER_DATA')
+                this.$store.commit('app-user/SET_TOKEN')
+
+                // HIDE MODAL
+                this.$vfm.hide('loginModal')
+                this.successLogin()
+                this.$router.push({ name: 'permintaan' })
               })
-          } else if (response.status == 401) {
-            console.info('aaa')
           }
           // get data profile setelah dapat token login
         })
-        .catch((e) => {
+        .catch(e => {
           const error = e.toJSON()
           if (error.status == '401') {
             this.errorNipPwEmpty()

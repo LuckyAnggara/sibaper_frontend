@@ -13,11 +13,13 @@
       />
       <div class="flex flex-col space-y-1">
         <input
-          class="p-3 border-[1px] border-slate-500 rounded-sm w-80"
+          class="p-3 border-[1px] border-slate-500 rounded-sm w-80 mb-5"
           placeholder="Password"
           v-model="password"
         />
-        <p class="font-bold text-[#0070ba]">Lupa password?</p>
+        <button v-if="!loading" class="font-bold text-[#0070ba]">
+          Lupa password?
+        </button>
       </div>
       <div class="flex flex-col space-y-5 w-full">
         <button
@@ -77,7 +79,30 @@ export default {
       password: null,
     }
   },
+  computed: {
+    userData() {
+      return this.$store.getters['app-user/getUserData']
+    },
+  },
   methods: {
+    successLogin() {
+      this.$toast.open({
+        message: `Selamat datang ${this.userData.name}`,
+        type: 'success',
+        duration: 3000,
+        position: 'top-right',
+        dismissible: true,
+      })
+    },
+    errorNipPwEmpty() {
+      this.$toast.open({
+        message: 'NIP dan Password salah',
+        type: 'error',
+        duration: 2000,
+        position: 'top',
+        dismissible: true,
+      })
+    },
     login() {
       const data = {
         nip: this.nip,
@@ -86,7 +111,7 @@ export default {
       this.loading = !this.loading
       this.$axios
         .post(`/login`, data)
-        .then((response) => {
+        .then(response => {
           console.info(response)
           // get data profile setelah dapat token login
           this.$axios
@@ -95,25 +120,30 @@ export default {
                 Authorization: `${response.data.token_type} ${response.data.access_token}`,
               },
             })
-            .then((res) => {
-              localStorage.setItem('token', JSON.stringify(response.data))
+            .then(res => {
               this.loading = !this.loading
+
               localStorage.setItem('userData', JSON.stringify(res.data))
-              const userData = res.data
-              this.$router
-                .replace(getHomeRouteForLoggedInUser(userData.role))
-                .then(() => {
-                  console.info(userData)
-                })
-                .catch((error) => {
-                  console.error(error)
-                })
+              localStorage.setItem('token', JSON.stringify(response.data))
+
+              this.$store.commit('app-user/SET_USER_DATA')
+              this.$store.commit('app-user/SET_TOKEN')
+
+              if (this.userData) {
+                this.$router.push({ name: 'home' })
+                console.info(this.userData)
+                this.successLogin()
+              }
             })
           // console.info(response)
         })
-        .catch((err) => {})
-        .then(function () {
+        .catch(e => {
           this.loading = !this.loading
+          const error = e.toJSON()
+          if (error.status == '401') {
+            this.errorNipPwEmpty()
+          }
+          this.loginLoading = !this.loginLoading
         })
     },
   },
