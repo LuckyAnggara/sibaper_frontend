@@ -1,5 +1,16 @@
 <template>
-  <router-view />
+  <component :is="layout">
+    <router-view />
+  </component>
 </template>
 
-<script></script>
+<script>
+export default {
+  computed: {
+    layout() {
+      if (this.$route.meta.layout === 'full') return 'layout-full'
+      return 'layout-normal'
+    },
+  },
+}
+</script>

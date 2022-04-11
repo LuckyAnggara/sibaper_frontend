@@ -4,6 +4,8 @@ import App from './App.vue'
 import './index.css'
 
 import moment from 'moment'
+import VueToast from 'vue-toast-notification'
+import 'vue-toast-notification/dist/theme-sugar.css'
 
 import { createRouter, createWebHistory } from 'vue-router'
 import {
@@ -45,7 +47,9 @@ router.beforeEach((to, _, next) => {
 
 app.config.globalProperties.$axios = axiosIns
 app.config.globalProperties.$moment = moment
+// app.config.globalProperties.$toast = VueToast
 app.use(router)
+app.use(VueToast)
 app.mount('#app')
 
 // createApp(App).mount('#app')

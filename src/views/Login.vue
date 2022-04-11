@@ -86,7 +86,7 @@ export default {
       this.loading = !this.loading
       this.$axios
         .post(`/login`, data)
-        .then(response => {
+        .then((response) => {
           console.info(response)
           // get data profile setelah dapat token login
           this.$axios
@@ -95,7 +95,7 @@ export default {
                 Authorization: `${response.data.token_type} ${response.data.access_token}`,
               },
             })
-            .then(res => {
+            .then((res) => {
               localStorage.setItem('token', JSON.stringify(response.data))
               this.loading = !this.loading
               localStorage.setItem('userData', JSON.stringify(res.data))
@@ -105,13 +105,13 @@ export default {
                 .then(() => {
                   console.info(userData)
                 })
-                .catch(error => {
+                .catch((error) => {
                   console.error(error)
                 })
             })
           // console.info(response)
         })
-        .catch(err => {})
+        .catch((err) => {})
         .then(function () {
           this.loading = !this.loading
         })

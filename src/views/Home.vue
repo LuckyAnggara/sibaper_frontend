@@ -1,36 +1,55 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
-  <!--
-    This example requires updating your template:
-
-    ```
-    <html class="h-full bg-gray-100">
-    <body class="h-full">
-    ```
-  -->
   <div class="min-h-full">
     <Disclosure as="nav" class="bg-white" v-slot="{ open }">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <img class="h-8" src="../../assets/logo.png" alt="Workflow" />
+              <img class="h-8" src="../assets/logo.png" alt="Workflow" />
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
-                <a
-                  v-for="item in navigation"
-                  :key="item.name"
-                  :href="item.href"
+                <button
                   :class="[
-                    item.current
+                    currentRouteName == 'home' || '/'
                       ? 'bg-gray-900 text-white'
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                     'px-3 py-2 rounded-md text-sm font-medium',
                   ]"
-                  :aria-current="item.current ? 'page' : undefined"
-                  >{{ item.name }}</a
+                  :aria-current="
+                    currentRouteName == 'home' || '/' ? 'page' : undefined
+                  "
                 >
+                  Home
+                </button>
+                <button
+                  @click="permintaan"
+                  :class="[
+                    currentRouteName == 'permintaan'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                    'px-3 py-2 rounded-md text-sm font-medium',
+                  ]"
+                  :aria-current="
+                    currentRouteName == 'permintaan' ? 'page' : undefined
+                  "
+                >
+                  Permintaan
+                </button>
+                <button
+                  :class="[
+                    currentRouteName == 'laporan'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                    'px-3 py-2 rounded-md text-sm font-medium',
+                  ]"
+                  :aria-current="
+                    currentRouteName == 'laporan' ? 'page' : undefined
+                  "
+                >
+                  Laporan
+                </button>
               </div>
             </div>
           </div>
@@ -46,7 +65,7 @@
                     >
                       <span class="sr-only">Open user menu</span>
                       <img
-                        class="h-8 w-8 rounded-full"
+                        class="h-10 w-10 rounded-full"
                         :src="user.imageUrl"
                         alt=""
                       />
@@ -128,14 +147,18 @@
         <div class="pt-4 pb-3 border-t border-gray-700">
           <div class="flex items-center px-5">
             <div class="flex-shrink-0">
-              <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
+              <img
+                class="h-10 w-10 rounded-full"
+                src="./src/assets/avatar.png"
+                alt=""
+              />
             </div>
             <div class="ml-3">
               <div class="text-base font-medium leading-none text-white">
-                {{ user.name }}
+                {{ userData.name }}
               </div>
               <div class="text-sm font-medium leading-none text-gray-400">
-                {{ user.email }}
+                {{ userData.nip }}
               </div>
             </div>
             <button
@@ -162,17 +185,25 @@
 
     <header class="bg-white shadow">
       <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-gray-900">Informasi Persediaan</h1>
+        <h1 class="text-3xl font-bold text-gray-900">{{ titleRoute }}</h1>
       </div>
     </header>
     <main>
-      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 content-start">
         <!-- Replace with your content -->
         <Table />
+        <Login />
         <!-- /End replace -->
       </div>
     </main>
   </div>
+  <vue-final-modal
+    v-model="showModal"
+    classes="flex justify-center items-center"
+    content-class="relative p-4 w-full max-w-md h-full md:h-auto"
+  >
+    <Login-Modal />
+  </vue-final-modal>
 </template>
 
 <script>
@@ -186,19 +217,20 @@ import {
   MenuItems,
 } from '@headlessui/vue'
 import { RouterLink } from 'vue-router'
-
+import { VueFinalModal } from 'vue-final-modal'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
-import Table from '../component/Table.vue'
+
+import Table from './component/Table.vue'
+import LoginModal from './component/LoginModal.vue'
 
 const user = {
   name: 'Tom Cook',
   email: 'tom@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+  imageUrl: './src/assets/avatar.png',
 }
 const navigation = [
   { name: 'Home', href: '#', current: true },
-  { name: 'Permintaan', href: '#', current: false },
+  { name: 'Permintaan', current: false },
   { name: 'Cek Data', href: '#', current: false },
 ]
 const userNavigation = [
@@ -209,6 +241,7 @@ const userNavigation = [
 
 export default {
   components: {
+    LoginModal,
     Table,
     Disclosure,
     DisclosureButton,
@@ -221,13 +254,32 @@ export default {
     MenuIcon,
     XIcon,
     RouterLink,
+    VueFinalModal,
+  },
+  data() {
+    return {
+      showModal: false,
+    }
+  },
+  computed: {
+    currentRouteName() {
+      return this.$route.name
+    },
+    titleRoute() {
+      return this.$route.meta.title
+    },
+    userData() {
+      return localStorage.getItem('userData')
+    },
   },
   methods: {
+    permintaan() {
+      if (!this.userData) this.showModal = true
+    },
     logout() {
       console.info('aaa')
       localStorage.removeItem('userData')
       localStorage.removeItem('token')
-
       // Redirect to login page
       this.$router.push({ name: 'login' })
     },
@@ -235,7 +287,6 @@ export default {
   created() {},
   setup() {
     return {
-      userData: localStorage.getItem('userData'),
       user,
       navigation,
       userNavigation,
