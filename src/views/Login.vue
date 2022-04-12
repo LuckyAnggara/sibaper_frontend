@@ -90,7 +90,7 @@ export default {
         message: `Selamat datang ${this.userData.name}`,
         type: 'success',
         duration: 3000,
-        position: 'top-right',
+        position: 'top',
         dismissible: true,
       })
     },
@@ -111,8 +111,7 @@ export default {
       this.loading = !this.loading
       this.$axios
         .post(`/login`, data)
-        .then(response => {
-          console.info(response)
+        .then((response) => {
           // get data profile setelah dapat token login
           this.$axios
             .get(`/profile`, {
@@ -120,7 +119,7 @@ export default {
                 Authorization: `${response.data.token_type} ${response.data.access_token}`,
               },
             })
-            .then(res => {
+            .then((res) => {
               this.loading = !this.loading
 
               localStorage.setItem('userData', JSON.stringify(res.data))
@@ -137,7 +136,7 @@ export default {
             })
           // console.info(response)
         })
-        .catch(e => {
+        .catch((e) => {
           this.loading = !this.loading
           const error = e.toJSON()
           if (error.status == '401') {

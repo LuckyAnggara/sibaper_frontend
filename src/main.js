@@ -4,6 +4,9 @@ import App from './App.vue'
 import './index.css'
 import Vuex from 'vuex'
 
+import VueSweetalert2 from 'vue-sweetalert2'
+import 'sweetalert2/dist/sweetalert2.min.css'
+
 import moment from 'moment'
 import vfmPlugin from 'vue-final-modal'
 import VueToast from 'vue-toast-notification'
@@ -47,9 +50,11 @@ router.beforeEach((to, _, next) => {
 
 // SETTING MODULES STATE MANAGEMENT VUEX
 import user from './store/user'
+import request from './store/request'
 const store = new Vuex.Store({
   modules: {
     'app-user': user,
+    'app-request': request,
   },
 })
 
@@ -57,6 +62,7 @@ app.config.globalProperties.$axios = axiosIns
 app.config.globalProperties.$moment = moment
 // app.config.globalProperties.$toast = VueToast
 app.use(router)
+app.use(VueSweetalert2)
 app.use(VueToast)
 app.use(vfmPlugin)
 app.use(store)

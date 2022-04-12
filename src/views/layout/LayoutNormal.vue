@@ -1,6 +1,6 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
-  <div class="min-h-full">
+  <div class="hidden-print min-h-full">
     <Disclosure as="nav" class="bg-white" v-slot="{ open }">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -37,6 +37,20 @@
                   "
                 >
                   Permintaan
+                </button>
+                <button
+                  @click="history"
+                  :class="[
+                    currentRouteName == 'laporan'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                    'px-3 py-2 rounded-md text-sm font-medium',
+                  ]"
+                  :aria-current="
+                    currentRouteName == 'laporan' ? 'page' : undefined
+                  "
+                >
+                  History
                 </button>
                 <button
                   :class="[
@@ -83,19 +97,26 @@
                     <MenuItems
                       class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                     >
-                      <MenuItem
-                        v-for="item in userNavigation"
-                        :key="item.name"
-                        v-slot="{ active }"
-                      >
+                      <MenuItem>
                         <a
-                          @click="item.name === 'Sign out' ? logout() : null"
-                          :href="item.href"
-                          :class="[
-                            active ? 'bg-gray-100' : '',
-                            'block px-4 py-2 text-sm text-gray-700',
-                          ]"
-                          >{{ item.name }}</a
+                          href="#"
+                          class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                          >{{ userData.name }}</a
+                        >
+                      </MenuItem>
+                      <MenuItem>
+                        <a
+                          href="#"
+                          class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                          >History</a
+                        >
+                      </MenuItem>
+                      <MenuItem>
+                        <a
+                          @click="logout"
+                          href="#"
+                          class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                          >Sign Out</a
                         >
                       </MenuItem>
                     </MenuItems>
@@ -277,6 +298,9 @@ export default {
     },
     home() {
       this.$router.push({ name: 'home' })
+    },
+    history() {
+      this.$router.push({ name: 'history' })
     },
     permintaan() {
       if (!this.userData) this.openLoginModal()
