@@ -11,7 +11,7 @@ import moment from 'moment'
 import vfmPlugin from 'vue-final-modal'
 import VueToast from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
-
+import { $vfm } from 'vue-final-modal'
 import { createRouter, createWebHistory } from 'vue-router'
 import {
   isUserLoggedIn,
@@ -40,13 +40,33 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, _, next) => {
+router.beforeResolve(async (to, _, next) => {
   const isLoggedIn = isUserLoggedIn()
 
   if (to.name == 'login' && isLoggedIn) {
     next({ name: 'home' })
-  } else next()
+  } else if (to.name == 'permintaan' && !isLoggedIn) {
+    next({ name: 'home' })
+    $vfm.show('loginModal')
+  } else {
+    next()
+  }
 })
+
+// router.beforeEach((to, _, next) => {
+//   const isLoggedIn = isUserLoggedIn()
+
+//   if (to.name == 'login' && isLoggedIn) {
+//     next({ name: 'home' })
+//   }
+//   else if (to.name == 'permintaan' && !isLoggedIn) {
+//     next({ name: 'home' })
+//     $vfm.show('loginModal')
+//   }
+//   else {
+//     next()
+//   }
+// })
 
 // SETTING MODULES STATE MANAGEMENT VUEX
 import user from './store/user'

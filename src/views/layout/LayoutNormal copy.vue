@@ -10,19 +10,61 @@
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
-                <a
-                  v-for="item in navigation"
-                  :key="item.name"
-                  :href="item.href"
+                <button
+                  @click="home"
                   :class="[
-                    item.name == $route.name
+                    currentRouteName === 'home'
                       ? 'bg-gray-900 text-white'
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                     'px-3 py-2 rounded-md text-sm font-medium',
                   ]"
-                  :aria-current="item.name == $route.name ? 'page' : undefined"
-                  >{{ item.name }}</a
+                  :aria-current="
+                    currentRouteName === 'home' ? 'page' : undefined
+                  "
                 >
+                  Home
+                </button>
+                <button
+                  @click="permintaan"
+                  :class="[
+                    currentRouteName == 'permintaan'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                    'px-3 py-2 rounded-md text-sm font-medium',
+                  ]"
+                  :aria-current="
+                    currentRouteName == 'permintaan' ? 'page' : undefined
+                  "
+                >
+                  Permintaan
+                </button>
+                <button
+                  @click="history"
+                  :class="[
+                    currentRouteName == 'history'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                    'px-3 py-2 rounded-md text-sm font-medium',
+                  ]"
+                  :aria-current="
+                    currentRouteName == 'history' ? 'page' : undefined
+                  "
+                >
+                  History
+                </button>
+                <button
+                  :class="[
+                    currentRouteName == 'laporan'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                    'px-3 py-2 rounded-md text-sm font-medium',
+                  ]"
+                  :aria-current="
+                    currentRouteName == 'laporan' ? 'page' : undefined
+                  "
+                >
+                  Laporan
+                </button>
               </div>
             </div>
           </div>
@@ -115,7 +157,7 @@
             as="a"
             :href="item.href"
             :class="[
-              item.name == $router.name
+              item.current
                 ? 'bg-gray-900 text-white'
                 : 'text-gray-300 hover:bg-gray-700 hover:text-white',
               'block px-3 py-2 rounded-md text-base font-medium',
@@ -208,9 +250,9 @@ const user = {
   imageUrl: './src/assets/avatar.png',
 }
 const navigation = [
-  { name: 'Home', href: 'home', current: true },
-  { name: 'Permintaan', href: 'permintaan', current: false },
-  { name: 'History', href: 'history', current: false },
+  { name: 'Home', href: '#', current: true },
+  { name: 'Permintaan', current: false },
+  { name: 'Cek Data', href: '#', current: false },
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '#', click: '' },
@@ -254,16 +296,16 @@ export default {
     openLoginModal() {
       this.$vfm.show('loginModal')
     },
-    // home() {
-    //   this.$router.push({ name: 'home' })
-    // },
-    // history() {
-    //   this.$router.push({ name: 'history' })
-    // },
-    // permintaan() {
-    //   if (!this.userData) this.openLoginModal()
-    //   else this.$router.push({ name: 'permintaan' })
-    // },
+    home() {
+      this.$router.push({ name: 'home' })
+    },
+    history() {
+      this.$router.push({ name: 'history' })
+    },
+    permintaan() {
+      if (!this.userData) this.openLoginModal()
+      else this.$router.push({ name: 'permintaan' })
+    },
     logout() {
       localStorage.removeItem('userData')
       localStorage.removeItem('token')
