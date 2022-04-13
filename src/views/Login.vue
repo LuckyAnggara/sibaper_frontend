@@ -66,6 +66,7 @@
 <script>
 import { LockClosedIcon } from '@heroicons/vue/solid'
 import { getHomeRouteForLoggedInUser } from '../auth'
+import { getNavigation } from '../routes'
 
 export default {
   components: {

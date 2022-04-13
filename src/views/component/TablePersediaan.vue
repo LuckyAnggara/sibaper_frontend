@@ -1,5 +1,14 @@
 <template>
   <section class="py-10">
+    <vue-final-modal
+      v-model="showModal"
+      name="newItemModal"
+      classes="flex justify-center items-center"
+      content-class="relative p-4 w-full max-w-md h-full md:h-auto"
+      :prevent-click="isModalLoading"
+    >
+      <Item-Modal @isModalLoading="modalLoading" />
+    </vue-final-modal>
     <template v-if="!isLoading">
       <div class="text-center">
         <svg
@@ -23,7 +32,7 @@
 
     <template v-else>
       <div v-if="error == false">
-        <div class="mb-5 relative flex flex-row items-center">
+        <div class="mb-5 relative flex flex-row justify-items-start">
           <div class="sm:rounded-lg">
             <label for="table-search" class="sr-only">Search</label>
             <div class="relative mt-1">
@@ -52,7 +61,7 @@
             </div>
           </div>
 
-          <div class="ml-5 relative sm:rounded-lg flex items-center">
+          <div class="sm:rounded-lg flex items-center w-1/5">
             <label class="flex-initial mr-2 ml-5">Show</label>
             <select
               v-model="limit"
@@ -63,6 +72,27 @@
                 {{ item }}
               </option>
             </select>
+          </div>
+
+          <div class="ml-5 relative sm:rounded-lg grid w-full items-end">
+            <button
+              @click="openNewItemModal"
+              type="button"
+              class="text-white justify-self-end bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              <svg
+                class="w-5 h-5 mr-2 -ml-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"
+                />
+              </svg>
+
+              Tambah
+            </button>
           </div>
         </div>
 
@@ -75,7 +105,9 @@
             >
               <tr>
                 <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
-                <th scope="col" class="px-6 py-3" style="width: 60%">Nama</th>
+                <th scope="col" class="px-6 py-3" style="width: 60%">
+                  Nama Barang Persediaan
+                </th>
                 <th scope="col" class="px-6 py-3" style="width: 15%">
                   Saldo Akhir
                 </th>
@@ -130,6 +162,24 @@
                     </th>
                     <td class="px-6 py-4">
                       {{ item.quantity == null ? 0 : item.quantity }}
+                      <button
+                        class="text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4 ml-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                          />
+                        </svg>
+                      </button>
                     </td>
                     <td class="px-6 py-4">
                       {{ this.$moment(item.updated_at).format('DD-MMM-YYYY') }}
@@ -219,9 +269,17 @@
 </template>
 
 <script>
+import ItemModal from './NewItemModal.vue'
+import { $vfm, VueFinalModal } from 'vue-final-modal'
+
 export default {
+  components: {
+    ItemModal,
+    VueFinalModal,
+  },
   data() {
     return {
+      showModal: false,
       tableLoading: false,
       searchName: null,
       dataTable: null,
@@ -231,6 +289,7 @@ export default {
           ? 5
           : localStorage.getItem('limit'),
       isLoading: true,
+      isModalLoading: false,
       error: false,
     }
   },
@@ -244,6 +303,13 @@ export default {
     },
   },
   methods: {
+    modalLoading() {
+      this.isModalLoading = !this.isModalLoading
+    },
+    openNewItemModal() {
+      console.info('aa')
+      this.showModal = true
+    },
     getData() {
       this.isLoading = !this.isLoading
       let b = ''

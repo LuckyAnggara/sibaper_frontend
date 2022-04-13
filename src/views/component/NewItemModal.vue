@@ -2,7 +2,8 @@
   <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
     <div class="flex justify-end p-2">
       <button
-        @click="this.$vfm.hide('loginModal')"
+        @click="$vfm.hide('newItemModal')"
+        :disabled="isLoading"
         type="button"
         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
         data-modal-toggle="authentication-modal"
@@ -21,40 +22,49 @@
         </svg>
       </button>
     </div>
-    <form class="px-6 pb-4 space-y-6 lg:px-8 sm:pb-6 xl:pb-8" action="#">
+    <form
+      class="px-6 pb-4 space-y-6 lg:px-8 sm:pb-6 xl:pb-8"
+      action="#"
+      @submit.prevent="submit"
+    >
       <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-        Login untuk melanjutkan
+        Tambah data baru
       </h3>
       <div>
         <label
-          for="nip"
+          for="email"
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >NIP</label
+          >Nama item</label
         >
         <input
-          type="number"
-          v-model="nip"
+          v-model="name"
+          :disabled="isLoading"
+          type="text"
+          id="email"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          placeholder="Nomor Induk Pegawai"
+          placeholder=""
           required
         />
       </div>
       <div>
         <label
-          for="password"
+          for="desc"
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Password</label
+          >Description</label
         >
-        <input
-          type="password"
-          v-model="password"
-          placeholder="••••••••"
+        <textarea
+          :disabled="isLoading"
+          v-model="desc"
+          type="text"
+          name="desc"
+          id="password"
+          placeholder=""
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          required
         />
       </div>
+
       <button
-        v-if="loginLoading"
+        v-if="isLoading"
         disabled
         type="button"
         class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -77,104 +87,70 @@
         </svg>
         Loading...
       </button>
-
       <button
         v-else
-        @click="login"
         type="submit"
         class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
-        Login
+        Submit
       </button>
-      <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-        Belum punya akun?
-        <a href="#" class="text-blue-700 hover:underline dark:text-blue-500"
-          >Buat akun</a
-        >
+      <div class="text-xs font-medium text-gray-500 dark:text-gray-300">
+        Persediaan awal Item ini adalah 0 <br />
+        Silahkan ubah jumlah persediaan di tombol quantity
       </div>
     </form>
   </div>
 </template>
 
 <script>
-import { getNavigation } from '../../routes'
-
 export default {
   data() {
     return {
-      loginLoading: false,
-      nip: null,
-      password: null,
+      name: null,
+      desc: null,
+      isLoading: false,
     }
   },
   computed: {
     userData() {
       return this.$store.getters['app-user/getUserData']
     },
+    token() {
+      return this.$store.getters['app-user/getToken']
+    },
   },
   methods: {
-    successLogin() {
-      this.$toast.open({
-        message: `Selamat datang ${this.userData.name}`,
-        type: 'success',
-        duration: 3000,
-        position: 'top',
-        dismissible: true,
-      })
-    },
-    errorNipPwEmpty() {
-      this.$toast.open({
-        message: 'NIP dan Password salah',
-        type: 'error',
-        duration: 2000,
-        position: 'top',
-        dismissible: true,
-      })
-    },
-    login() {
-      const data = {
-        nip: this.nip,
-        password: this.password,
-      }
-      this.loginLoading = !this.loginLoading
+    submit() {
+      this.$emit('isModalLoading', true)
+      this.isLoading = !this.isLoading
       this.$axios
-        .post(`/login`, data)
-        .then((response) => {
-          if (response.status == 200) {
-            this.$axios
-              .get(`/profile`, {
-                headers: {
-                  Authorization: `${response.data.token_type} ${response.data.access_token}`,
-                },
-              })
-              .then((res) => {
-                this.loginLoading = !this.loginLoading
-                //SET DATA KE DALAM LOCAL STORAGE
-                localStorage.setItem('token', JSON.stringify(response.data))
-                localStorage.setItem('userData', JSON.stringify(res.data))
-
-                // UPDATE MUTATION STATE VUEX
-                this.$store.commit('app-user/SET_USER_DATA')
-                this.$store.commit('app-user/SET_TOKEN')
-                // HIDE MODAL
-                this.$vfm.hide('loginModal')
-                this.successLogin()
-                this.$router.push({ name: 'permintaan' })
-              })
+        .post(
+          `/product/store`,
+          {
+            name: this.name,
+            desc: this.desc,
+          },
+          {
+            headers: {
+              Authorization: `${this.token.token_type} ${this.token.access_token}`,
+            },
           }
-          // get data profile setelah dapat token login
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            this.name = null
+            this.desc = null
+            this.isLoading = !this.isLoading
+            this.$emit('isModalLoading', false)
+            this.$vfm.hide('newItemModal')
+          }
         })
         .catch((e) => {
+          this.isLoading = !this.isLoading
+          this.$emit('isModalLoading', false)
           const error = e.toJSON()
-          if (error.status == '401') {
-            this.errorNipPwEmpty()
-          }
-          this.loginLoading = !this.loginLoading
+          console.info(e)
         })
-    },
-    close() {
-      console.info('aaa')
-      this.$emit('close', 'someValue')
     },
   },
 }

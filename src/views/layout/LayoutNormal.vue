@@ -199,7 +199,7 @@ import {
 import { RouterLink } from 'vue-router'
 import { VueFinalModal, $vfm } from 'vue-final-modal'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
-
+import { getNavigation } from '../../routes'
 import LoginModal from '../component/LoginModal.vue'
 
 const user = {
@@ -207,11 +207,6 @@ const user = {
   email: 'tom@example.com',
   imageUrl: './src/assets/avatar.png',
 }
-const navigation = [
-  { name: 'Home', href: 'home', current: true },
-  { name: 'Permintaan', href: 'permintaan', current: false },
-  { name: 'History', href: 'history', current: false },
-]
 const userNavigation = [
   { name: 'Your Profile', href: '#', click: '' },
   { name: 'Settings', href: '#', click: '' },
@@ -240,6 +235,9 @@ export default {
     }
   },
   computed: {
+    navigation() {
+      return this.$store.getters['app-menu/getMenu']
+    },
     currentRouteName() {
       return this.$route.name
     },
@@ -254,16 +252,6 @@ export default {
     openLoginModal() {
       this.$vfm.show('loginModal')
     },
-    // home() {
-    //   this.$router.push({ name: 'home' })
-    // },
-    // history() {
-    //   this.$router.push({ name: 'history' })
-    // },
-    // permintaan() {
-    //   if (!this.userData) this.openLoginModal()
-    //   else this.$router.push({ name: 'permintaan' })
-    // },
     logout() {
       localStorage.removeItem('userData')
       localStorage.removeItem('token')
@@ -280,7 +268,6 @@ export default {
   setup() {
     return {
       user,
-      navigation,
       userNavigation,
     }
   },

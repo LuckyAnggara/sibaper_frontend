@@ -13,12 +13,8 @@ import VueToast from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 import { $vfm } from 'vue-final-modal'
 import { createRouter, createWebHistory } from 'vue-router'
-import {
-  isUserLoggedIn,
-  getHomeRouteForLoggedInUser,
-  getUserData,
-} from './auth'
-import { routes } from './routes.js'
+import { isUserLoggedIn } from './auth'
+import { routes, getNavigation } from './routes.js'
 
 // axios
 import axios from 'axios'
@@ -42,6 +38,7 @@ const router = createRouter({
 
 router.beforeResolve(async (to, _, next) => {
   const isLoggedIn = isUserLoggedIn()
+  store.commit('app-menu/SET_MENU', getNavigation())
 
   if (to.name == 'login' && isLoggedIn) {
     next({ name: 'home' })
@@ -71,10 +68,12 @@ router.beforeResolve(async (to, _, next) => {
 // SETTING MODULES STATE MANAGEMENT VUEX
 import user from './store/user'
 import request from './store/request'
+import menu from './store/menu'
 const store = new Vuex.Store({
   modules: {
     'app-user': user,
     'app-request': request,
+    'app-menu': menu,
   },
 })
 

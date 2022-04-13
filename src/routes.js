@@ -1,11 +1,12 @@
 // IMPORT HALAMAN
-import Home from './views/Home.vue'
 import OutputRequest from './views/component/OutputRequest.vue'
 import Permintaan from './views/Permintaan.vue'
 import Table from './views/component/Table.vue'
 import Login from './views/Login.vue'
+import Persediaan from './views/Persediaan.vue'
 import NotFound from './views/NotFound.vue'
 import History from './views/History.vue'
+import { getUserData, isUserLoggedIn } from './auth'
 
 // SETTING ROUTER
 
@@ -25,6 +26,15 @@ export const routes = [
     component: Permintaan,
     meta: {
       title: 'Form Permintaan Barang Persediaan',
+      layout: 'layout-normal',
+    },
+  },
+  {
+    path: '/persediaan',
+    name: 'persediaan',
+    component: Persediaan,
+    meta: {
+      title: 'Data Persediaan',
       layout: 'layout-normal',
     },
   },
@@ -68,5 +78,38 @@ export const routes = [
     },
   },
 ]
+
+// NAVIGATION
+const nonUser = [
+  { name: 'Home', href: 'home' },
+  { name: 'Permintaan', href: 'permintaan' },
+]
+
+const user = [
+  { name: 'Home', href: 'home' },
+  { name: 'Permintaan', href: 'permintaan' },
+  { name: 'History', href: 'history' },
+]
+
+const admin = [
+  { name: 'Home', href: 'home' },
+  { name: 'Persediaan', href: 'persediaan' },
+  { name: 'Mutasi', href: 'mutasi' },
+]
+
+export const getNavigation = () => {
+  const isLoggedIn = isUserLoggedIn()
+  const userData = getUserData()
+  if (isLoggedIn) {
+    if (userData.role == 'USER') {
+      return user
+    } else if (userData.role == 'ADMIN') {
+      return admin
+    }
+  } else {
+    return nonUser
+  }
+  // return localStorage.getItem('userData') && localStorage.getItem(useJwt.jwtConfig.storageTokenKeyName)
+}
 
 // SETTING GUARD
