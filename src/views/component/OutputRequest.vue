@@ -131,16 +131,15 @@ export default {
     getDataTicket() {
       this.$axios
         .get(`/request/get?no_ticket=${this.noTicket}`)
-        .then((res) => {
+        .then(res => {
           this.loading = !this.loading
           if (res.status == 200) {
             this.$store.commit('app-request/SET_REQUEST_RESULT', res.data.data)
           }
         })
-        .catch((e) => {
+        .catch(e => {
           this.loading = !this.loading
           const error = e.toJSON()
-          console.info(e)
         })
     },
   },

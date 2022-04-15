@@ -6,11 +6,10 @@ export default {
     menu: getNavigation(),
   },
   getters: {
-    getMenu: (state) => state.menu,
+    getMenu: state => state.menu,
   },
   mutations: {
     SET_MENU(state, data) {
-      console.info(data)
       state.menu = data
     },
   },

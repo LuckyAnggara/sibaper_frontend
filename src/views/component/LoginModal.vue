@@ -139,7 +139,7 @@ export default {
       this.loginLoading = !this.loginLoading
       this.$axios
         .post(`/login`, data)
-        .then((response) => {
+        .then(response => {
           if (response.status == 200) {
             this.$axios
               .get(`/profile`, {
@@ -147,7 +147,7 @@ export default {
                   Authorization: `${response.data.token_type} ${response.data.access_token}`,
                 },
               })
-              .then((res) => {
+              .then(res => {
                 this.loginLoading = !this.loginLoading
                 //SET DATA KE DALAM LOCAL STORAGE
                 localStorage.setItem('token', JSON.stringify(response.data))
@@ -164,7 +164,7 @@ export default {
           }
           // get data profile setelah dapat token login
         })
-        .catch((e) => {
+        .catch(e => {
           const error = e.toJSON()
           if (error.status == '401') {
             this.errorNipPwEmpty()
@@ -173,7 +173,6 @@ export default {
         })
     },
     close() {
-      console.info('aaa')
       this.$emit('close', 'someValue')
     },
   },

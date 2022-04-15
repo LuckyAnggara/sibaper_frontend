@@ -1,13 +1,13 @@
 <template>
   <section class="py-10">
     <vue-final-modal
-      v-model="showModal"
+      v-model="showLoginModal"
       name="newItemModal"
       classes="flex justify-center items-center"
       content-class="relative p-4 w-full max-w-md h-full md:h-auto"
       :prevent-click="isModalLoading"
     >
-      <Item-Modal @isModalLoading="modalLoading" />
+      <Item-Modal @isModalLoading="modalLoading" @newItem="newItem" />
     </vue-final-modal>
     <template v-if="!isLoading">
       <div class="text-center">
@@ -105,15 +105,15 @@
             >
               <tr>
                 <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
-                <th scope="col" class="px-6 py-3" style="width: 60%">
-                  Nama Barang Persediaan
+                <th scope="col" class="px-6 py-3" style="width: 45%">Nama</th>
+
+                <th scope="col" class="px-6 py-3" style="width: 20%">
+                  Terakhir Keluar
                 </th>
                 <th scope="col" class="px-6 py-3" style="width: 15%">
                   Saldo Akhir
                 </th>
-                <th scope="col" class="px-6 py-3" style="width: 20%">
-                  Terakhir Keluar
-                </th>
+                <th scope="col" class="px-6 py-3" style="width: 15%">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -144,9 +144,13 @@
               <template v-else>
                 <template v-if="dataTable.data.length > 0 ? true : false">
                   <tr
-                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                     v-for="(item, index) in dataTable.data"
                     :key="item.id"
+                    :class="[
+                      index == 0 && baru == true
+                        ? 'bg-green-100 border-b dark:bg-green-800 dark:border-gray-700'
+                        : 'bg-white border-b dark:bg-gray-800 dark:border-gray-700',
+                    ]"
                   >
                     <th
                       scope="row"
@@ -159,15 +163,27 @@
                       class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
                     >
                       {{ item.name }}
+                      <span
+                        v-if="index == 0 && baru == true"
+                        class="mr-2 bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900"
+                        >New</span
+                      >
                     </th>
+
+                    <td class="px-6 py-4">
+                      {{ this.$moment(item.updated_at).format('DD-MMM-YYYY') }}
+                    </td>
                     <td class="px-6 py-4">
                       {{ item.quantity == null ? 0 : item.quantity }}
+                    </td>
+                    <td class="px-6 py-4">
                       <button
-                        class="text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
+                        @click="view(item.no_ticket)"
+                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4 ml-1"
+                          class="h-6 w-6"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -176,13 +192,15 @@
                           <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                           />
                         </svg>
                       </button>
-                    </td>
-                    <td class="px-6 py-4">
-                      {{ this.$moment(item.updated_at).format('DD-MMM-YYYY') }}
                     </td>
                   </tr>
                 </template>
@@ -270,16 +288,16 @@
 
 <script>
 import ItemModal from './NewItemModal.vue'
-import { $vfm, VueFinalModal } from 'vue-final-modal'
 
 export default {
   components: {
     ItemModal,
-    VueFinalModal,
   },
   data() {
     return {
-      showModal: false,
+      params: 'aa',
+      showLoginModal: false,
+      showInputPersediaanModal: false,
       tableLoading: false,
       searchName: null,
       dataTable: null,
@@ -291,6 +309,7 @@ export default {
       isLoading: true,
       isModalLoading: false,
       error: false,
+      baru: false,
     }
   },
   watch: {
@@ -303,24 +322,30 @@ export default {
     },
   },
   methods: {
+    openInputPersediaanModal(x) {
+      this.showInputPersediaanModal = true
+    },
+    newItem() {
+      this.getData()
+      this.baru = true
+    },
     modalLoading() {
       this.isModalLoading = !this.isModalLoading
     },
     openNewItemModal() {
-      console.info('aa')
-      this.showModal = true
+      this.$vfm.show('newItemModal')
     },
     getData() {
+      this.baru = false
       this.isLoading = !this.isLoading
-      let b = ''
 
       this.$axios
         .get(`/product?limit=${this.limit}`)
-        .then((res) => {
+        .then(res => {
           this.isLoading = !this.isLoading
           this.dataTable = res.data.data
         })
-        .catch((e) => {
+        .catch(e => {
           this.isLoading = !this.isLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -333,14 +358,14 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`/product?limit=${this.limit}&name=${this.searchName}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
     },
     limitChange() {
       this.tableLoading = !this.tableLoading
-      this.$axios.get(`/product?limit=${this.limit}`).then((res) => {
+      this.$axios.get(`/product?limit=${this.limit}`).then(res => {
         this.tableLoading = !this.tableLoading
         this.dataTable = res.data.data
       })
@@ -354,7 +379,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.next_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -368,7 +393,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.prev_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })

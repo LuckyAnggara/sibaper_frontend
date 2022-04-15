@@ -112,7 +112,7 @@ export default {
       this.loading = !this.loading
       this.$axios
         .post(`/login`, data)
-        .then((response) => {
+        .then(response => {
           // get data profile setelah dapat token login
           this.$axios
             .get(`/profile`, {
@@ -120,7 +120,7 @@ export default {
                 Authorization: `${response.data.token_type} ${response.data.access_token}`,
               },
             })
-            .then((res) => {
+            .then(res => {
               this.loading = !this.loading
 
               localStorage.setItem('userData', JSON.stringify(res.data))
@@ -131,13 +131,11 @@ export default {
 
               if (this.userData) {
                 this.$router.push({ name: 'home' })
-                console.info(this.userData)
                 this.successLogin()
               }
             })
-          // console.info(response)
         })
-        .catch((e) => {
+        .catch(e => {
           this.loading = !this.loading
           const error = e.toJSON()
           if (error.status == '401') {

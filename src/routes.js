@@ -1,6 +1,7 @@
 // IMPORT HALAMAN
 import OutputRequest from './views/component/OutputRequest.vue'
 import Permintaan from './views/Permintaan.vue'
+import Pembelian from './views/Pembelian.vue'
 import Table from './views/component/Table.vue'
 import Login from './views/Login.vue'
 import Persediaan from './views/Persediaan.vue'
@@ -26,6 +27,15 @@ export const routes = [
     component: Permintaan,
     meta: {
       title: 'Form Permintaan Barang Persediaan',
+      layout: 'layout-normal',
+    },
+  },
+  {
+    path: '/pembelian',
+    name: 'pembelian',
+    component: Pembelian,
+    meta: {
+      title: 'Pembelian Persediaan',
       layout: 'layout-normal',
     },
   },
@@ -94,7 +104,7 @@ const user = [
 const admin = [
   { name: 'Home', href: 'home' },
   { name: 'Persediaan', href: 'persediaan' },
-  { name: 'Mutasi', href: 'mutasi' },
+  { name: 'Pembelian', href: 'pembelian' },
 ]
 
 export const getNavigation = () => {

@@ -109,6 +109,10 @@ export default {
       name: null,
       desc: null,
       isLoading: false,
+      limit:
+        localStorage.getItem('limit') === ('' || null)
+          ? 5
+          : localStorage.getItem('limit'),
     }
   },
   computed: {
@@ -136,20 +140,20 @@ export default {
             },
           }
         )
-        .then((res) => {
+        .then(res => {
           if (res.status === 200) {
             this.name = null
             this.desc = null
+            this.$emit('newItem')
             this.isLoading = !this.isLoading
             this.$emit('isModalLoading', false)
             this.$vfm.hide('newItemModal')
           }
         })
-        .catch((e) => {
+        .catch(e => {
           this.isLoading = !this.isLoading
           this.$emit('isModalLoading', false)
           const error = e.toJSON()
-          console.info(e)
         })
     },
   },

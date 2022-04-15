@@ -83,7 +83,14 @@ app.config.globalProperties.$moment = moment
 app.use(router)
 app.use(VueSweetalert2)
 app.use(VueToast)
-app.use(vfmPlugin)
+
+app.use(
+  vfmPlugin({
+    key: '$vfm',
+    componentName: 'VueFinalModal',
+    dynamicContainerName: 'ModalsContainer',
+  })
+)
 app.use(store)
 app.mount('#app')
 
