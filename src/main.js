@@ -3,7 +3,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import './index.css'
 import Vuex from 'vuex'
-
 import VueSweetalert2 from 'vue-sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
 
@@ -68,12 +67,16 @@ router.beforeResolve(async (to, _, next) => {
 // SETTING MODULES STATE MANAGEMENT VUEX
 import user from './store/user'
 import request from './store/request'
+import purchase from './store/purchase'
 import menu from './store/menu'
+import mutation from './store/mutation'
 const store = new Vuex.Store({
   modules: {
     'app-user': user,
     'app-request': request,
+    'app-purchase': purchase,
     'app-menu': menu,
+    'app-mutation': mutation,
   },
 })
 

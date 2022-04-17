@@ -1,5 +1,36 @@
 <template>
-  <div class="mt-5 flex flex-col justify-center items-center w-full">
+  <form
+    class="mt-5 flex flex-col justify-center items-center w-full"
+    autocomplete="off"
+    @submit.prevent="submit"
+  >
+    <div class="ml-5 relative sm:rounded-lg grid w-full items-end">
+      <button
+        @click="toDaftarPembelian"
+        type="button"
+        class="text-white justify-self-end bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >
+        <svg
+          class="w-5 h-5 mr-2 -ml-1"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"
+          />
+          <path
+            d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"
+          />
+          <path
+            d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"
+          />
+        </svg>
+
+        Daftar Pembelian
+      </button>
+    </div>
+
     <div class="flex-col w-1/3 items-center">
       <div class="mb-2 text-center">
         <label
@@ -29,7 +60,7 @@
           :disabled="loading"
           v-model="name"
           type="text"
-          class="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="shadow-md block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Search..."
         />
         <template v-if="dataProduct !== null || dataProduct.length > 0">
@@ -48,7 +79,7 @@
         </template>
       </div>
     </div>
-    <div class="mt-10 flex w-3/4 overflow-x-auto shadow-lg rounded-lg">
+    <div class="mt-10 flex w-3/4 overflow-x-auto shadow-md rounded-lg">
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead
           class="text-xs text-gray-800 uppercase bg-gray-400 dark:bg-gray-700 dark:text-gray-400"
@@ -64,7 +95,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="(item, index) in detailRequest"
+            v-for="(item, index) in detailPurchase"
             :key="item.id"
             class="border-b dark:bg-gray-800 dark:border-gray-700 bg-gray-200"
           >
@@ -78,7 +109,7 @@
             <td class="px-6 py-4">
               <input
                 :disabled="loading"
-                v-model="detailRequest[index].quantity"
+                v-model="detailPurchase[index].quantity"
                 type="number"
                 class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
@@ -110,57 +141,43 @@
       </table>
     </div>
 
-    <div class="mb-6 mt-5 flex w-3/4 justify-end bg-red-500">
-      <label
-        class="mr-5 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 inline-block align-middle"
+    <div class="mb-3 mt-5 flex w-3/4 justify-end items-center">
+      <label class="mr-5 text-sm font-medium text-gray-900 dark:text-gray-300 i"
         >Tanggal</label
       >
-      <input
-        class="w-1/3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        required
-      />
-    </div>
-    <div class="mb-6">
-      <label
-        for="password"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >Your password</label
-      >
-      <input
-        type="password"
-        id="password"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        required
-      />
-    </div>
-    <div class="flex items-start mb-6">
-      <div class="flex items-center h-5">
+      <div class="w-1/3">
         <input
-          id="remember"
-          aria-describedby="remember"
-          type="checkbox"
-          class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+          v-model="tanggal"
+          type="date"
+          class="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Pilih tnggal"
           required
         />
       </div>
-      <div class="ml-3 text-sm">
-        <label
-          for="remember"
-          class="font-medium text-gray-900 dark:text-gray-300"
-          >Remember me</label
-        >
+    </div>
+
+    <div class="flex w-3/4 justify-end items-center">
+      <label class="mr-5 text-sm font-medium text-gray-900 dark:text-gray-300 i"
+        >Bukti / Keterangan</label
+      >
+      <div class="w-1/3">
+        <input
+          v-model="notes"
+          type="text"
+          class="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Optional"
+        />
       </div>
     </div>
 
     <div
-      class="mt-10 flex w-3/4 overflow-x-auto justify-end"
-      v-if="detailRequest.length > 0 ? true : false"
+      class="mt-5 flex w-3/4 overflow-x-auto justify-end"
+      v-if="detailPurchase.length > 0 ? true : false"
     >
       <button
-        @click="submit"
         :disabled="loading"
-        type="button"
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        type="submit"
+        class="text-white shadow-md bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         <template v-if="!loading">
           Submit
@@ -200,7 +217,7 @@
         </template>
       </button>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
@@ -210,7 +227,9 @@ export default {
       loading: false,
       dataProduct: [],
       name: null,
-      detailRequest: [],
+      notes: null,
+      tanggal: null,
+      detailPurchase: [],
     }
   },
   computed: {
@@ -227,25 +246,30 @@ export default {
     },
   },
   methods: {
+    toDaftarPembelian() {
+      this.$router.push({ name: 'daftar-pembelian' })
+    },
     success() {
       this.$swal({
         position: 'top-end',
         icon: 'success',
-        title: 'Permintaan persediaan telah di kirimkan',
+        title: 'Pembelian telah di Proses, silahkan cek mutasi persediaan',
         showConfirmButton: false,
         timer: 1500,
         toast: true,
       })
+      this.toDaftarPembelian()
     },
     submit() {
       this.loading = !this.loading
       this.$axios
         .post(
-          `/request/store`,
+          `/purchase/store`,
           {
             user_id: this.userData.id,
-            notes: 'Test',
-            detail: this.detailRequest,
+            notes: this.notes,
+            tanggal: this.tanggal,
+            detail: this.detailPurchase,
           },
           {
             headers: {
@@ -256,29 +280,24 @@ export default {
         .then(res => {
           this.loading = !this.loading
           if (res.status == 200) {
-            this.$store.commit('app-request/SET_REQUEST_RESULT', res.data.data)
+            this.$store.commit(
+              'app-purchase/SET_PURCHASE_RESULT',
+              res.data.data
+            )
             this.success()
-            this.$router.push({
-              name: 'output-ticket',
-              params: { no_ticket: res.data.data.no_ticket },
-            })
           }
-        })
-        .catch(e => {
-          this.loading = !this.loading
-          const error = e.toJSON()
         })
     },
     hapusItem(index) {
-      this.detailRequest.splice(index, 1)
+      this.detailPurchase.splice(index, 1)
     },
     pilihItem(data) {
-      const b = this.detailRequest.find(d => d.id === data.id)
+      const b = this.detailPurchase.find(d => d.id === data.id)
       if (b) {
-        const index = this.detailRequest.findIndex(d => d.id === data.id)
-        this.detailRequest[index].quantity += 1
+        const index = this.detailPurchase.findIndex(d => d.id === data.id)
+        this.detailPurchase[index].quantity += 1
       } else {
-        this.detailRequest.push({
+        this.detailPurchase.push({
           id: data.id,
           name: data.name,
           quantity: 1,

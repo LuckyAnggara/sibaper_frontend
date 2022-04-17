@@ -23,7 +23,7 @@
 
     <template v-else>
       <div v-if="error == false">
-        <div class="mb-5 relative flex flex-row items-center">
+        <div class="mb-5 relative flex flex-row items-center justify-between">
           <div class="sm:rounded-lg">
             <label for="table-search" class="sr-only">Search</label>
             <div class="relative mt-1">
@@ -46,7 +46,7 @@
               <input
                 v-model="searchName"
                 type="text"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                class="bg-gray-50 border shadow-md border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search for items"
               />
             </div>
@@ -57,7 +57,7 @@
             <select
               v-model="limit"
               id="countries"
-              class="flex-initial relative mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="flex-initial shadow-md relative mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option v-for="item in limitPage" :key="item.id">
                 {{ item }}
@@ -76,11 +76,26 @@
               <tr>
                 <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
                 <th scope="col" class="px-6 py-3" style="width: 60%">Nama</th>
-                <th scope="col" class="px-6 py-3" style="width: 15%">
-                  Saldo Akhir
-                </th>
-                <th scope="col" class="px-6 py-3" style="width: 20%">
-                  Terakhir Keluar
+                <th
+                  scope="col"
+                  class="px-6 py-3 flex-row flex items-center"
+                  style="width: 35%"
+                >
+                  Saldo
+                  <button @click="sortSaldo">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="ml-2 h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                      />
+                    </svg>
+                  </button>
                 </th>
               </tr>
             </thead>
@@ -110,17 +125,17 @@
                 </tr>
               </template>
               <template v-else>
-                <template v-if="dataTable.data.length > 0 ? true : false">
+                <template v-if="masterData.data.length > 0 ? true : false">
                   <tr
                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                    v-for="(item, index) in dataTable.data"
+                    v-for="(item, index) in dataTable"
                     :key="item.id"
                   >
                     <th
                       scope="row"
                       class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
                     >
-                      {{ dataTable.from + index }}
+                      {{ masterData.from + index }}
                     </th>
                     <th
                       scope="row"
@@ -128,11 +143,8 @@
                     >
                       {{ item.name }}
                     </th>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 flex justify-center">
                       {{ item.quantity == null ? 0 : item.quantity }}
-                    </td>
-                    <td class="px-6 py-4">
-                      {{ this.$moment(item.updated_at).format('DD-MMM-YYYY') }}
                     </td>
                   </tr>
                 </template>
@@ -155,22 +167,22 @@
           <span class="text-sm text-gray-700 dark:text-gray-400">
             Data
             <span class="font-semibold text-gray-900 dark:text-white">{{
-              dataTable.from
+              masterData.from
             }}</span>
             sampai
             <span class="font-semibold text-gray-900 dark:text-white">{{
-              dataTable.to
+              masterData.to
             }}</span>
             dari
             <span class="font-semibold text-gray-900 dark:text-white">{{
-              dataTable.total
+              masterData.total
             }}</span>
             Data
           </span>
           <div class="inline-flex mt-2 xs:mt-0">
             <!-- Buttons -->
             <button
-              :disabled="dataTable.current_page == 1"
+              :disabled="masterData.current_page == 1"
               @click="previous"
               class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-gray-800 disabled:bg-gray-600 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
@@ -189,7 +201,7 @@
               Prev
             </button>
             <button
-              :disabled="dataTable.current_page == dataTable.last_page"
+              :disabled="masterData.current_page == masterData.last_page"
               @click="next"
               class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-gray-800 disabled:bg-gray-600 rounded-r border-0 border-l border-gray-700 hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
@@ -222,9 +234,10 @@
 export default {
   data() {
     return {
+      sort: true,
       tableLoading: false,
       searchName: null,
-      dataTable: null,
+      masterData: null,
       limitPage: [5, 10, 25, 100],
       limit:
         localStorage.getItem('limit') === ('' || null)
@@ -233,6 +246,11 @@ export default {
       isLoading: true,
       error: false,
     }
+  },
+  computed: {
+    dataTable() {
+      return this.masterData.data
+    },
   },
   watch: {
     limit(e) {
@@ -244,19 +262,33 @@ export default {
     },
   },
   methods: {
+    sortSaldo() {
+      if (this.sort) {
+        this.sort = !this.sort
+        this.masterData.data.sort((a, b) => {
+          return parseFloat(b.quantity) - parseFloat(a.quantity)
+        })
+      } else {
+        this.sort = !this.sort
+
+        this.masterData.data.sort((a, b) => {
+          return parseFloat(a.quantity) - parseFloat(b.quantity)
+        })
+      }
+    },
     getData() {
       this.isLoading = !this.isLoading
       let b = ''
 
       this.$axios
         .get(`/product?limit=${this.limit}`)
-        .then((res) => {
+        .then(res => {
           this.isLoading = !this.isLoading
-          this.dataTable = res.data.data
+          this.masterData = res.data.data
         })
-        .catch((e) => {
+        .catch(e => {
           this.isLoading = !this.isLoading
-          this.dataTable = {}
+          this.masterData = {}
           const error = e.toJSON()
           if (e.name == 'Error') {
             this.error = !this.error
@@ -267,16 +299,16 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`/product?limit=${this.limit}&name=${this.searchName}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
-          this.dataTable = res.data.data
+          this.masterData = res.data.data
         })
     },
     limitChange() {
       this.tableLoading = !this.tableLoading
-      this.$axios.get(`/product?limit=${this.limit}`).then((res) => {
+      this.$axios.get(`/product?limit=${this.limit}`).then(res => {
         this.tableLoading = !this.tableLoading
-        this.dataTable = res.data.data
+        this.masterData = res.data.data
       })
     },
     next() {
@@ -287,10 +319,10 @@ export default {
 
       this.tableLoading = !this.tableLoading
       this.$axios
-        .get(`${this.dataTable.next_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .get(`${this.masterData.next_page_url}&limit=${this.limit + params}`)
+        .then(res => {
           this.tableLoading = !this.tableLoading
-          this.dataTable = res.data.data
+          this.masterData = res.data.data
         })
     },
     previous() {
@@ -301,10 +333,10 @@ export default {
 
       this.tableLoading = !this.tableLoading
       this.$axios
-        .get(`${this.dataTable.prev_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .get(`${this.masterData.prev_page_url}&limit=${this.limit + params}`)
+        .then(res => {
           this.tableLoading = !this.tableLoading
-          this.dataTable = res.data.data
+          this.masterData = res.data.data
         })
     },
   },

@@ -1,12 +1,17 @@
 // IMPORT HALAMAN
 import OutputRequest from './views/component/OutputRequest.vue'
 import Permintaan from './views/Permintaan.vue'
+import Home from './views/Home.vue'
 import Pembelian from './views/Pembelian.vue'
+import DaftarPembelian from './views/DaftarPembelian.vue'
+import DetailPembelian from './views/DetailPembelian.vue'
+import DetailPermintaan from './views/DetailPermintaan.vue'
 import Table from './views/component/Table.vue'
 import Login from './views/Login.vue'
 import Persediaan from './views/Persediaan.vue'
 import NotFound from './views/NotFound.vue'
 import History from './views/History.vue'
+import DaftarPermintaan from './views/DaftarPermintaan.vue'
 import { getUserData, isUserLoggedIn } from './auth'
 
 // SETTING ROUTER
@@ -15,7 +20,7 @@ export const routes = [
   {
     path: '/home',
     name: 'home',
-    component: Table,
+    component: Home,
     meta: {
       title: 'Informasi Persediaan',
       layout: 'layout-normal',
@@ -26,7 +31,25 @@ export const routes = [
     name: 'permintaan',
     component: Permintaan,
     meta: {
-      title: 'Form Permintaan Barang Persediaan',
+      title: 'Form Permintaan Persediaan',
+      layout: 'layout-normal',
+    },
+  },
+  {
+    path: '/daftar-permintaan',
+    name: 'daftar-permintaan',
+    component: DaftarPermintaan,
+    meta: {
+      title: 'Daftar Permintaan',
+      layout: 'layout-normal',
+    },
+  },
+  {
+    path: '/detail-permintaan',
+    name: 'detail-permintaan',
+    component: DetailPermintaan,
+    meta: {
+      title: 'Detail Permintaan',
       layout: 'layout-normal',
     },
   },
@@ -36,6 +59,24 @@ export const routes = [
     component: Pembelian,
     meta: {
       title: 'Pembelian Persediaan',
+      layout: 'layout-normal',
+    },
+  },
+  {
+    path: '/daftar-pembelian',
+    name: 'daftar-pembelian',
+    component: DaftarPembelian,
+    meta: {
+      title: 'Daftar Pembelian',
+      layout: 'layout-normal',
+    },
+  },
+  {
+    path: '/detail-pembelian=:id',
+    name: 'detail-pembelian',
+    component: DetailPembelian,
+    meta: {
+      title: 'Detail Pembelian',
       layout: 'layout-normal',
     },
   },
@@ -62,7 +103,7 @@ export const routes = [
     name: 'output-ticket',
     component: OutputRequest,
     meta: {
-      title: 'Bukti',
+      title: 'Bukti Permintaan',
       layout: 'layout-normal',
     },
   },
@@ -105,6 +146,7 @@ const admin = [
   { name: 'Home', href: 'home' },
   { name: 'Persediaan', href: 'persediaan' },
   { name: 'Pembelian', href: 'pembelian' },
+  { name: 'Daftar Permintaan', href: 'daftar-permintaan' },
 ]
 
 export const getNavigation = () => {

@@ -1,27 +1,5 @@
 <template>
   <section class="py-10">
-    <vue-final-modal
-      v-model="showNewItemModal"
-      name="newItemModal"
-      classes="flex justify-center items-center"
-      content-class="relative p-4 w-full max-w-md h-full md:h-auto"
-      :prevent-click="isModalLoading"
-    >
-      <Item-Modal @isModalLoading="modalLoading" @newItem="newItem" />
-    </vue-final-modal>
-    <vue-final-modal
-      v-model="showMutationModal"
-      name="mutationModal"
-      classes="flex justify-center items-center"
-      content-class="flex p-4 w-full max-w-[60%] h-512 "
-    >
-      <TableMutation
-        @limitChange="mutationLimitChange"
-        @next="mutationNext"
-        @previous="mutationPrevious"
-        @searchTerm="mutationSearch"
-      />
-    </vue-final-modal>
     <template v-if="!isLoading">
       <div class="text-center">
         <svg
@@ -45,7 +23,7 @@
 
     <template v-else>
       <div v-if="error == false">
-        <div class="mb-5 relative flex flex-row justify-items-start">
+        <div class="mb-5 relative flex flex-row items-center">
           <div class="sm:rounded-lg">
             <label for="table-search" class="sr-only">Search</label>
             <div class="relative mt-1">
@@ -69,17 +47,17 @@
                 v-model="searchName"
                 type="text"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search for items"
+                placeholder="Search.."
               />
             </div>
           </div>
 
-          <div class="sm:rounded-lg flex items-center w-1/5">
+          <div class="ml-5 relative sm:rounded-lg flex items-center">
             <label class="flex-initial mr-2 ml-5">Show</label>
             <select
               v-model="limit"
               id="countries"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="flex-initial relative mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option v-for="item in limitPage" :key="item.id">
                 {{ item }}
@@ -87,25 +65,17 @@
             </select>
           </div>
 
-          <div class="ml-5 relative sm:rounded-lg grid w-full items-end">
-            <button
-              @click="openNewItemModal"
-              type="button"
-              class="text-white justify-self-end bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          <div class="ml-5 relative sm:rounded-lg flex items-center">
+            <label class="flex-initial mr-2 ml-5">Status</label>
+            <select
+              v-model="status"
+              id="countries"
+              class="flex-initial relative mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <svg
-                class="w-5 h-5 mr-2 -ml-1"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"
-                />
-              </svg>
-
-              Tambah
-            </button>
+              <option v-for="item in statusPage" :key="item.id">
+                {{ item }}
+              </option>
+            </select>
           </div>
         </div>
 
@@ -118,21 +88,23 @@
             >
               <tr>
                 <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
-                <th scope="col" class="px-6 py-3" style="width: 45%">Nama</th>
-
-                <th scope="col" class="px-6 py-3" style="width: 20%">
-                  Terakhir Keluar
+                <th scope="col" class="px-6 py-3" style="width: 40%">
+                  Nomor Ticket
+                </th>
+                <th scope="col" class="px-6 py-3" style="width: 25%">
+                  Tanggal Pengajuan
                 </th>
                 <th scope="col" class="px-6 py-3" style="width: 15%">
-                  Saldo Akhir
+                  Di Ajukan Oleh
                 </th>
-                <th scope="col" class="px-6 py-3" style="width: 15%">Action</th>
+                <th scope="col" class="px-6 py-3" style="width: 15%">Status</th>
+                <th scope="col" class="px-6 py-3" style="width: 5%">Action</th>
               </tr>
             </thead>
             <tbody>
               <template v-if="tableLoading">
                 <tr :style="tableLoading == true ? 'height:100px' : ''">
-                  <th colspan="4" class="text-center">
+                  <th colspan="4" class="text-center mt">
                     <div class="text-center">
                       <svg
                         role="status"
@@ -157,13 +129,9 @@
               <template v-else>
                 <template v-if="dataTable.data.length > 0 ? true : false">
                   <tr
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                     v-for="(item, index) in dataTable.data"
                     :key="item.id"
-                    :class="[
-                      index == 0 && baru == true
-                        ? 'bg-green-100 border-b dark:bg-green-800 dark:border-gray-700'
-                        : 'bg-white border-b dark:bg-gray-800 dark:border-gray-700',
-                    ]"
                   >
                     <th
                       scope="row"
@@ -175,23 +143,37 @@
                       scope="row"
                       class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
                     >
-                      {{ item.name }}
-                      <span
-                        v-if="index == 0 && baru == true"
-                        class="mr-2 bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900"
-                        >New</span
-                      >
+                      {{ item.no_ticket }}
                     </th>
-
                     <td class="px-6 py-4">
-                      {{ this.$moment(item.updated_at).format('DD-MMM-YYYY') }}
+                      {{ this.$moment(item.created_at).format('DD MMMM YYYY') }}
                     </td>
                     <td class="px-6 py-4">
-                      {{ item.quantity == null ? 0 : item.quantity }}
+                      {{ item.user.name }}
                     </td>
                     <td class="px-6 py-4">
+                      <template v-if="item.status == 'PENDING'">
+                        <span
+                          class="bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900"
+                          >{{ item.status }}</span
+                        >
+                      </template>
+                      <template v-else-if="item.status == 'ACCEPT'">
+                        <span
+                          class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900"
+                          >{{ item.status }}</span
+                        >
+                      </template>
+                      <template v-else-if="item.status == 'REJECT'">
+                        <span
+                          class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900"
+                          >{{ item.status }}</span
+                        >
+                      </template>
+                    </td>
+                    <td class="px-6 py-4 text-center">
                       <button
-                        @click="openMutationModal(item.id)"
+                        @click="view(item)"
                         class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
                       >
                         <svg
@@ -232,7 +214,6 @@
         </div>
 
         <div class="mt-5 flex flex-col items-center">
-          <!-- Help text -->
           <span class="text-sm text-gray-700 dark:text-gray-400">
             Data
             <span class="font-semibold text-gray-900 dark:text-white">{{
@@ -249,7 +230,6 @@
             Data
           </span>
           <div class="inline-flex mt-2 xs:mt-0">
-            <!-- Buttons -->
             <button
               :disabled="dataTable.current_page == 1"
               @click="previous"
@@ -300,32 +280,38 @@
 </template>
 
 <script>
-import ItemModal from './NewItemModal.vue'
-import TableMutation from './TableMutation.vue'
-
 export default {
-  components: {
-    ItemModal,
-    TableMutation,
-  },
   data() {
     return {
-      productId: null,
-      showNewItemModal: false,
-      showMutationModal: false,
       tableLoading: false,
       searchName: null,
       dataTable: null,
       limitPage: [5, 10, 25, 100],
+      statusPage: ['SEMUA', 'PENDING', 'ACCEPT', 'REJECT'],
+      status:
+        localStorage.getItem('status') === ('' || null)
+          ? 'SEMUA'
+          : localStorage.getItem('status'),
       limit:
         localStorage.getItem('limit') === ('' || null)
           ? 5
           : localStorage.getItem('limit'),
       isLoading: true,
-      isModalLoading: false,
       error: false,
-      baru: false,
     }
+  },
+  watch: {
+    limit(e) {
+      localStorage.setItem('limit', e)
+      this.getData()
+    },
+    status(e) {
+      localStorage.setItem('status', e)
+      this.getData()
+    },
+    searchName() {
+      this.searchChange()
+    },
   },
   computed: {
     userData() {
@@ -335,44 +321,34 @@ export default {
       return this.$store.getters['app-user/getToken']
     },
   },
-  watch: {
-    limit(e) {
-      localStorage.setItem('limit', e)
-      this.limitChange()
-    },
-    searchName() {
-      this.searchChange()
-    },
-  },
   methods: {
-    openMutationModal(x) {
-      this.productId = x
-      this.$store.commit('app-mutation/SET_LOADING', true)
-      this.getMutation(this.productId)
-      this.$vfm.show('mutationModal')
-    },
-    newItem() {
-      this.getData()
-      this.baru = true
-    },
-    modalLoading() {
-      this.isModalLoading = !this.isModalLoading
-    },
-    openNewItemModal() {
-      this.$vfm.show('newItemModal')
+    view(x) {
+      if (x.status === 'PENDING') {
+        this.$router.push({
+          name: 'detail-permintaan',
+          params: { no_ticket: x.no_ticket },
+        })
+      } else if (x.status === 'ACCEPT') {
+        this.$router.push({
+          name: 'output-ticket',
+          params: { no_ticket: x.no_ticket },
+        })
+      }
     },
     getData() {
-      this.baru = false
-      this.isLoading = !this.isLoading
-
+      this.tableLoading = !this.tableLoading
       this.$axios
-        .get(`/product?limit=${this.limit}`)
+        .get(`/request/all-admin?limit=${this.limit}&status=${this.status}`, {
+          headers: {
+            Authorization: `${this.token.token_type} ${this.token.access_token}`,
+          },
+        })
         .then(res => {
-          this.isLoading = !this.isLoading
+          this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
         .catch(e => {
-          this.isLoading = !this.isLoading
+          this.tableLoading = !this.tableLoading
           this.dataTable = {}
           const error = e.toJSON()
           if (e.name == 'Error') {
@@ -381,9 +357,17 @@ export default {
         })
     },
     searchChange() {
+      if (this.searchName == '' || null) {
+        this.getData()
+        return
+      }
       this.tableLoading = !this.tableLoading
       this.$axios
-        .get(`/product?limit=${this.limit}&name=${this.searchName}`)
+        .get(`/request?limit=${this.limit}&no_ticket=${this.searchName}`, {
+          headers: {
+            Authorization: `${this.token.token_type} ${this.token.access_token}`,
+          },
+        })
         .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
@@ -391,20 +375,30 @@ export default {
     },
     limitChange() {
       this.tableLoading = !this.tableLoading
-      this.$axios.get(`/product?limit=${this.limit}`).then(res => {
-        this.tableLoading = !this.tableLoading
-        this.dataTable = res.data.data
-      })
+      this.$axios
+        .get(`/request?limit=${this.limit}`, {
+          headers: {
+            Authorization: `${this.token.token_type} ${this.token.access_token}`,
+          },
+        })
+        .then(res => {
+          this.tableLoading = !this.tableLoading
+          this.dataTable = res.data.data
+        })
     },
     next() {
       let params = ''
       if (this.searchName !== null || '') {
-        params = `&name=${this.searchName}`
+        params = `&no_ticket=${this.searchName}`
       }
 
       this.tableLoading = !this.tableLoading
       this.$axios
-        .get(`${this.dataTable.next_page_url}&limit=${this.limit + params}`)
+        .get(`${this.dataTable.next_page_url}&limit=${this.limit + params}`, {
+          headers: {
+            Authorization: `${this.token.token_type} ${this.token.access_token}`,
+          },
+        })
         .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
@@ -413,93 +407,19 @@ export default {
     previous() {
       let params = ''
       if (this.searchName !== null || '') {
-        params = `&name=${this.searchName}`
+        params = `&no_ticket=${this.searchName}`
       }
+
       this.tableLoading = !this.tableLoading
       this.$axios
-        .get(`${this.dataTable.prev_page_url}&limit=${this.limit + params}`)
+        .get(`${this.dataTable.prev_page_url}&limit=${this.limit + params}`, {
+          headers: {
+            Authorization: `${this.token.token_type} ${this.token.access_token}`,
+          },
+        })
         .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
-        })
-    },
-    // MUTASI
-    getMutation(x) {
-      this.$axios
-        .get(`/mutation/get?id=${x}&limit=5`, {
-          headers: {
-            Authorization: `${this.token.token_type} ${this.token.access_token}`,
-          },
-        })
-        .then(res => {
-          if (res.status == 200) {
-            this.$store.commit('app-mutation/SET_MUTATION', res.data)
-            this.$store.commit('app-mutation/SET_LOADING', false)
-          }
-        })
-    },
-    mutationLimitChange(limit) {
-      this.$store.commit('app-mutation/SET_LOADING', true)
-      this.$axios
-        .get(
-          `/mutation/get?id=${this.productId}&limit=${limit}&id=${this.productId}`,
-          {
-            headers: {
-              Authorization: `${this.token.token_type} ${this.token.access_token}`,
-            },
-          }
-        )
-        .then(res => {
-          if (res.status == 200) {
-            this.$store.commit('app-mutation/SET_MUTATION', res.data)
-            this.$store.commit('app-mutation/SET_LOADING', false)
-          }
-        })
-    },
-    mutationNext(link, limit) {
-      this.$store.commit('app-mutation/SET_LOADING', true)
-      this.$axios
-        .get(`${link}&limit=${limit}&id=${this.productId}`, {
-          headers: {
-            Authorization: `${this.token.token_type} ${this.token.access_token}`,
-          },
-        })
-        .then(res => {
-          if (res.status == 200) {
-            this.$store.commit('app-mutation/SET_MUTATION', res.data)
-            this.$store.commit('app-mutation/SET_LOADING', false)
-          }
-        })
-    },
-    mutationPrevious(link, limit) {
-      this.$store.commit('app-mutation/SET_LOADING', true)
-      this.$axios
-        .get(`${link}&limit=${limit}&id=${this.productId}`, {
-          headers: {
-            Authorization: `${this.token.token_type} ${this.token.access_token}`,
-          },
-        })
-        .then(res => {
-          if (res.status == 200) {
-            this.$store.commit('app-mutation/SET_MUTATION', res.data)
-            this.$store.commit('app-mutation/SET_LOADING', false)
-          }
-        })
-    },
-    mutationSearch(searchTerm, limit) {
-      this.$store.commit('app-mutation/SET_LOADING', true)
-      this.$axios
-        .get(
-          `/mutation/get?search_term=${searchTerm}&limit=${limit}&id=${this.productId}`,
-          {
-            headers: {
-              Authorization: `${this.token.token_type} ${this.token.access_token}`,
-            },
-          }
-        )
-        .then(res => {
-          this.$store.commit('app-mutation/SET_MUTATION', res.data)
-          this.$store.commit('app-mutation/SET_LOADING', false)
         })
     },
   },

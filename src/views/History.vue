@@ -1,6 +1,6 @@
 <template>
   <section class="py-10">
-    <template v-if="!isLoading">
+    <template v-if="isLoading">
       <div class="text-center">
         <svg
           role="status"
@@ -78,11 +78,11 @@
                 <th scope="col" class="px-6 py-3" style="width: 40%">
                   Nomor Ticket
                 </th>
-                <th scope="col" class="px-6 py-3" style="width: 25%">
+                <th scope="col" class="px-6 py-3" style="width: 20%">
                   Tanggal Pengajuan
                 </th>
                 <th scope="col" class="px-6 py-3" style="width: 15%">Status</th>
-                <th scope="col" class="px-6 py-3" style="width: 5%">Action</th>
+                <th scope="col" class="px-6 py-3" style="width: 10%">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -133,7 +133,24 @@
                       {{ this.$moment(item.created_at).format('DD MMMM YYYY') }}
                     </td>
                     <td class="px-6 py-4">
-                      {{ item.status }}
+                      <template v-if="item.status == 'PENDING'">
+                        <span
+                          class="bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900"
+                          >{{ item.status }}</span
+                        >
+                      </template>
+                      <template v-else-if="item.status == 'ACCEPT'">
+                        <span
+                          class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900"
+                          >{{ item.status }}</span
+                        >
+                      </template>
+                      <template v-else-if="item.status == 'REJECT'">
+                        <span
+                          class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900"
+                          >{{ item.status }}</span
+                        >
+                      </template>
                     </td>
                     <td class="px-6 py-4 text-center">
                       <button
@@ -157,6 +174,26 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        v-if="item.status == 'PENDING'"
+                        @click="hapusPermintaan(item)"
+                        class="ml-2 font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                           />
                         </svg>
                       </button>
@@ -264,6 +301,7 @@ export default {
       localStorage.setItem('limit', e)
       this.getData()
     },
+
     searchName() {
       this.searchChange()
     },
@@ -277,6 +315,46 @@ export default {
     },
   },
   methods: {
+    success(item) {
+      this.$swal({
+        position: 'bottom-end',
+        icon: 'success',
+        title: `Nomor ticket ${item.no_ticket} telah di hapus`,
+        showConfirmButton: false,
+        timer: 2500,
+        toast: true,
+      })
+    },
+    hapusPermintaan(item) {
+      this.$swal
+        .fire({
+          title: 'Hapus?',
+          text: `Permintaan nomor ticket #${item.no_ticket} akan dihapus!`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Proses!',
+        })
+        .then(result => {
+          if (result.isConfirmed) {
+            this.$axios
+              .delete(`/request/destroy/${item.id}`, {
+                headers: {
+                  Authorization: `${this.token.token_type} ${this.token.access_token}`,
+                },
+              })
+              .then(res => {
+                this.loading = !this.loading
+                if (res.status == 200) {
+                  this.success(item)
+                  this.getData()
+                }
+              })
+          } else {
+          }
+        })
+    },
     view(x) {
       this.$router.push({
         name: 'output-ticket',
@@ -284,7 +362,7 @@ export default {
       })
     },
     getData() {
-      this.isLoading = !this.isLoading
+      this.tableLoading = !this.tableLoading
       this.$axios
         .get(`/request?limit=${this.limit}`, {
           headers: {
@@ -292,11 +370,12 @@ export default {
           },
         })
         .then(res => {
-          this.isLoading = !this.isLoading
+          this.isLoading = false
+          this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
         .catch(e => {
-          this.isLoading = !this.isLoading
+          this.tableLoading = !this.tableLoading
           this.dataTable = {}
           const error = e.toJSON()
           if (e.name == 'Error') {
@@ -368,6 +447,7 @@ export default {
     },
   },
   created() {
+    this.isLoading = true
     this.getData()
   },
 }

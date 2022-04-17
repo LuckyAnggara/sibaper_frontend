@@ -69,13 +69,15 @@
           <div class="border border-t-2 border-gray-200 mb-8"></div>
           <div>
             <div
-              v-for="item in dataRequest.detail"
+              v-for="item in dataRequest.detail.filter(
+                x => x.status != 'REJECT'
+              )"
               :key="item.id"
               class="flex justify-between mb-4 bg-gray-200 px-3 py-2"
             >
               <div>{{ item.product.name }}</div>
               <div class="text-right font-medium">
-                {{ item.quantity }}
+                {{ item.acc_quantity > 0 ? item.acc_quantity : item.quantity }}
               </div>
             </div>
           </div>

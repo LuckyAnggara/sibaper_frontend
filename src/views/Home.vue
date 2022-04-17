@@ -1,5 +1,7 @@
 <template>
-  <table-vue />
+  <div class="w-full flex justify-center">
+    <table-vue />
+  </div>
 </template>
 
 <script>

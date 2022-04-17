@@ -1,53 +1,9 @@
 <template>
-  <div class="mt-5 flex flex-col justify-center items-center w-full">
-    <div class="flex-col w-1/3 items-center">
-      <div class="mb-2 text-center">
-        <label
-          for="email-adress-icon"
-          class="font-medium text-gray-900 dark:text-gray-300"
-          >Cari data barang</label
-        >
-      </div>
-      <div class="relative mr-3 mb-2 md:mr-0 md:block">
-        <div
-          class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none"
-        >
-          <svg
-            class="w-5 h-5 text-gray-500"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-        </div>
-        <input
-          :disabled="loading"
-          v-model="name"
-          type="text"
-          class="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Search..."
-        />
-        <template v-if="dataProduct !== null || dataProduct.length > 0">
-          <div
-            class="mt-1 fixed float-right w-auto text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <a
-              v-for="item in dataProduct"
-              :key="item.name"
-              @click="pilihItem(item)"
-              class="block relative rounded-t-lg px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white"
-            >
-              {{ item.name }}
-            </a>
-          </div>
-        </template>
-      </div>
-    </div>
+  <form
+    class="mt-5 flex flex-col justify-center items-center w-full"
+    autocomplete="off"
+    @submit.prevent="submit"
+  >
     <div class="mt-10 flex w-3/4 overflow-x-auto shadow-lg rounded-lg">
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead
@@ -55,13 +11,13 @@
         >
           <tr>
             <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
-            <th scope="col" class="px-6 py-3" style="width: 40%">
-              Nama Barang Persediaan
+            <th scope="col" class="px-6 py-3" style="width: 45%">
+              Nama Persediaan
             </th>
-            <th scope="col" class="px-6 py-3" style="width: 20%">
-              Saldo tersedia
+            <th scope="col" class="px-6 py-3" style="width: 25%">Sisa Saldo</th>
+            <th scope="col" class="px-6 py-3" style="width: 35%">
+              Jumlah Permintaan
             </th>
-            <th scope="col" class="px-6 py-3" style="width: 20%">Jumlah</th>
             <th scope="col" class="px-6 py-3" style="width: 5%">Action</th>
           </tr>
         </thead>
@@ -76,13 +32,13 @@
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
             >
-              {{ item.name }}
+              {{ item.product.name }}
             </th>
             <th
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
             >
-              {{ item.real_quantity }}
+              {{ item.product.quantity }}
             </th>
             <td class="px-6 py-4 flex-row flex items-center">
               <input
@@ -92,7 +48,7 @@
                 class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
               <template
-                v-if="item.real_quantity >= detailRequest[index].quantity"
+                v-if="item.product.quantity >= detailRequest[index].quantity"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -157,15 +113,11 @@
         >.
       </p>
     </div>
-    <div
-      class="mt-10 flex w-3/4 overflow-x-auto justify-end"
-      v-if="detailRequest.length > 0 ? true : false"
-    >
+
+    <div class="mt-5 flex w-3/4 overflow-x-auto justify-end">
       <button
-        @click="submit"
-        :disabled="loading"
-        type="button"
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        type="submit"
+        class="text-white shadow-md bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         <template v-if="!loading">
           Submit
@@ -205,28 +157,32 @@
         </template>
       </button>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      loading: false,
-      dataProduct: [],
-      name: null,
       detailRequest: [],
+      masterRequest: {
+        id: null,
+      },
+      loading: false,
     }
   },
   computed: {
     error() {
       let total = 0
       this.detailRequest.forEach(x => {
-        if (x.real_quantity < x.quantity) {
+        if (x.product.quantity < x.quantity) {
           total += 1
         }
       })
       return total
+    },
+    noTicket() {
+      return this.$route.params.no_ticket
     },
     userData() {
       return this.$store.getters['app-user/getUserData']
@@ -240,14 +196,17 @@ export default {
       this.getData(string)
     },
   },
+  created() {
+    this.getData()
+  },
   methods: {
     success() {
       this.$swal({
         position: 'top-end',
         icon: 'success',
-        title: 'Permintaan persediaan telah di kirimkan',
+        title: `Permintaan nomor ticket ${this.noTicket} telah di proses`,
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2500,
         toast: true,
       })
     },
@@ -258,8 +217,8 @@ export default {
           title: 'Proses?',
           text:
             this.error > 0
-              ? 'Masih ada permintaan persediaan yang melebihi Saldo tersedia, tetap Proses?'
-              : 'Proses permintaan persediaan ?',
+              ? 'Masih ada permintaan persediaan yang melebihi Saldo tersedia. Permintaan yang melebihi saldo tersedia tidak akan di proses.'
+              : 'Status permintaan akan di terima, jumlah persediaan akan berubah.',
           icon: this.error > 0 ? 'warning' : 'info',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -269,12 +228,12 @@ export default {
         .then(result => {
           if (result.isConfirmed) {
             this.$axios
-              .post(
-                `/request/store`,
+              .put(
+                `/request/update`,
                 {
-                  user_id: this.userData.id,
-                  notes: 'Test',
+                  id: this.masterRequest.id,
                   detail: this.detailRequest,
+                  status: 'ACCEPT',
                 },
                 {
                   headers: {
@@ -285,20 +244,8 @@ export default {
               .then(res => {
                 this.loading = !this.loading
                 if (res.status == 200) {
-                  this.$store.commit(
-                    'app-request/SET_REQUEST_RESULT',
-                    res.data.data
-                  )
                   this.success()
-                  this.$router.push({
-                    name: 'output-ticket',
-                    params: { no_ticket: res.data.data.no_ticket },
-                  })
                 }
-              })
-              .catch(e => {
-                this.loading = !this.loading
-                const error = e.toJSON()
               })
           } else {
             this.loading = !this.loading
@@ -308,35 +255,20 @@ export default {
     hapusItem(index) {
       this.detailRequest.splice(index, 1)
     },
-    pilihItem(data) {
-      const b = this.detailRequest.find(d => d.id === data.id)
-      if (b) {
-        const index = this.detailRequest.findIndex(d => d.id === data.id)
-        this.detailRequest[index].quantity += 1
-      } else {
-        this.detailRequest.push({
-          id: data.id,
-          name: data.name,
-          real_quantity: data.quantity,
-          quantity: 1,
+    getData() {
+      this.$axios
+        .get(`/request/get-admin?no_ticket=${this.noTicket}`, {
+          headers: {
+            Authorization: `${this.token.token_type} ${this.token.access_token}`,
+          },
         })
-      }
-      this.dataProduct = []
-      this.name = null
-    },
-    getData(string) {
-      if (string == '' || null) {
-        this.dataProduct = []
-      } else {
-        this.$axios
-          .get(`/product?name=${string}`)
-          .then(res => {
-            this.dataProduct = res.data.data.data
-          })
-          .catch(e => {
-            this.dataProduct = null
-          })
-      }
+        .then(res => {
+          this.masterRequest = res.data.data
+          this.detailRequest = res.data.data.detail
+        })
+        .catch(e => {
+          this.detailRequest = null
+        })
     },
   },
 }
