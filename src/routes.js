@@ -8,6 +8,7 @@ import DetailPembelian from './views/DetailPembelian.vue'
 import DetailPermintaan from './views/DetailPermintaan.vue'
 import Table from './views/component/Table.vue'
 import Login from './views/Login.vue'
+import Profile from './views/ProfilePage.vue'
 import Persediaan from './views/Persediaan.vue'
 import NotFound from './views/NotFound.vue'
 import History from './views/History.vue'
@@ -114,6 +115,15 @@ export const routes = [
     meta: {
       title: 'Login',
       layout: 'layout-full',
+    },
+  },
+  {
+    path: '/profile-page',
+    name: 'profile',
+    component: Profile,
+    meta: {
+      title: 'Profile Page',
+      layout: 'layout-normal',
     },
   },
   {

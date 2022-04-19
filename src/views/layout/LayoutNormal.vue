@@ -1,6 +1,6 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
-  <div class="hidden-print min-h-full">
+  <div class="hidden-print min-h-full flex flex-col h-screen justify-between">
     <Disclosure as="nav" class="bg-white" v-slot="{ open }">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -57,7 +57,7 @@
                     >
                       <MenuItem>
                         <a
-                          href="#"
+                          href="profile-page"
                           class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
                           >{{ userData.name }}</a
                         >
@@ -168,13 +168,29 @@
         <h1 class="text-3xl font-bold text-gray-900">{{ titleRoute }}</h1>
       </div>
     </header>
-    <main>
+    <main class="mb-auto">
       <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 content-start">
         <!-- Replace with your content -->
         <router-view />
         <!-- /End replace -->
       </div>
     </main>
+    <footer
+      class="p-4 bg-white rounded-lg shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800"
+    >
+      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"
+        >© {{ $moment().format('YYYY') }}
+        <a href="https://flowbite.com" class="hover:underline">Rutan Salemba</a
+        >. All Rights Reserved.
+      </span>
+      <ul
+        class="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0"
+      >
+        <li>
+          <a href="#" class="mr-4 hover:underline md:mr-6">About</a>
+        </li>
+      </ul>
+    </footer>
   </div>
   <vue-final-modal
     v-model="showModal"

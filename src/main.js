@@ -5,6 +5,7 @@ import './index.css'
 import Vuex from 'vuex'
 import VueSweetalert2 from 'vue-sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
+import 'flowbite'
 
 import moment from 'moment'
 import vfmPlugin from 'vue-final-modal'
@@ -12,7 +13,7 @@ import VueToast from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 import { $vfm } from 'vue-final-modal'
 import { createRouter, createWebHistory } from 'vue-router'
-import { isUserLoggedIn } from './auth'
+import { getUserData, isUserLoggedIn } from './auth'
 import { routes, getNavigation } from './routes.js'
 
 // axios
@@ -37,6 +38,7 @@ const router = createRouter({
 
 router.beforeResolve(async (to, _, next) => {
   const isLoggedIn = isUserLoggedIn()
+  const userData = getUserData()
   store.commit('app-menu/SET_MENU', getNavigation())
 
   if (to.name == 'login' && isLoggedIn) {
@@ -44,6 +46,8 @@ router.beforeResolve(async (to, _, next) => {
   } else if (to.name == 'permintaan' && !isLoggedIn) {
     next({ name: 'home' })
     $vfm.show('loginModal')
+  } else if (to.name == 'permintaan' && userData.role == 'ADMIN') {
+    next({ name: 'home' })
   } else {
     next()
   }

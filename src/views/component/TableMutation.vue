@@ -80,11 +80,11 @@
                 Tanggal Transaksi
               </th>
               <th scope="col" class="px-6 py-3" style="width: 25%">
-                Keterangan
+                No Bukti / Keterangan
               </th>
-              <th scope="col" class="px-6 py-3" style="width: 20%">Debit</th>
-              <th scope="col" class="px-6 py-3" style="width: 20%">Kredit</th>
-              <th scope="col" class="px-6 py-3" style="width: 20%">Saldo</th>
+              <th scope="col" class="px-6 py-3" style="width: 20%">Masuk</th>
+              <th scope="col" class="px-6 py-3" style="width: 20%">Keluar</th>
+              <th scope="col" class="px-6 py-3" style="width: 20%">Total</th>
             </tr>
           </thead>
           <tbody>

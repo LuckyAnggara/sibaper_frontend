@@ -16,6 +16,7 @@
           class="p-3 border-[1px] border-slate-500 rounded-sm w-80 mb-5"
           placeholder="Password"
           v-model="password"
+          type="password"
         />
         <button v-if="!loading" class="font-bold text-[#0070ba]">
           Lupa password?
@@ -112,7 +113,7 @@ export default {
       this.loading = !this.loading
       this.$axios
         .post(`/login`, data)
-        .then(response => {
+        .then((response) => {
           // get data profile setelah dapat token login
           this.$axios
             .get(`/profile`, {
@@ -120,7 +121,7 @@ export default {
                 Authorization: `${response.data.token_type} ${response.data.access_token}`,
               },
             })
-            .then(res => {
+            .then((res) => {
               this.loading = !this.loading
 
               localStorage.setItem('userData', JSON.stringify(res.data))
@@ -135,7 +136,7 @@ export default {
               }
             })
         })
-        .catch(e => {
+        .catch((e) => {
           this.loading = !this.loading
           const error = e.toJSON()
           if (error.status == '401') {

@@ -1,5 +1,5 @@
 <template>
-  <section class="py-10">
+  <section class="py-10 w-2/4">
     <template v-if="!isLoading">
       <div class="text-center">
         <svg
@@ -52,12 +52,11 @@
             </div>
           </div>
 
-          <div class="ml-5 relative sm:rounded-lg flex items-center">
-            <label class="flex-initial mr-2 ml-5">Show</label>
+          <div class="ml-5 relative sm:rounded-lg flex w-1/4 items-center">
+            <label class="flex flex-row mr-2 ml-5">Show</label>
             <select
               v-model="limit"
-              id="countries"
-              class="flex-initial shadow-md relative mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="shadow-md flex mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option v-for="item in limitPage" :key="item.id">
                 {{ item }}
@@ -282,11 +281,11 @@ export default {
 
       this.$axios
         .get(`/product?limit=${this.limit}`)
-        .then(res => {
+        .then((res) => {
           this.isLoading = !this.isLoading
           this.masterData = res.data.data
         })
-        .catch(e => {
+        .catch((e) => {
           this.isLoading = !this.isLoading
           this.masterData = {}
           const error = e.toJSON()
@@ -299,14 +298,14 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`/product?limit=${this.limit}&name=${this.searchName}`)
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.masterData = res.data.data
         })
     },
     limitChange() {
       this.tableLoading = !this.tableLoading
-      this.$axios.get(`/product?limit=${this.limit}`).then(res => {
+      this.$axios.get(`/product?limit=${this.limit}`).then((res) => {
         this.tableLoading = !this.tableLoading
         this.masterData = res.data.data
       })
@@ -320,7 +319,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.masterData.next_page_url}&limit=${this.limit + params}`)
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.masterData = res.data.data
         })
@@ -334,7 +333,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.masterData.prev_page_url}&limit=${this.limit + params}`)
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.masterData = res.data.data
         })
