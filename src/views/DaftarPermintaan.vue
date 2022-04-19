@@ -46,18 +46,17 @@
               <input
                 v-model="searchName"
                 type="text"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                class="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search.."
               />
             </div>
           </div>
 
-          <div class="ml-5 relative sm:rounded-lg flex items-center">
-            <label class="flex-initial mr-2 ml-5">Show</label>
+          <div class="ml-5 relative sm:rounded-lg flex w-1/6 items-center">
+            <label class="flex flex-row mr-2 ml-5">Show</label>
             <select
               v-model="limit"
-              id="countries"
-              class="flex-initial relative mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="shadow-md flex mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option v-for="item in limitPage" :key="item.id">
                 {{ item }}
@@ -65,12 +64,12 @@
             </select>
           </div>
 
-          <div class="ml-5 relative sm:rounded-lg flex items-center">
+          <div class="ml-5 relative sm:rounded-lg flex w-1/4 items-center">
             <label class="flex-initial mr-2 ml-5">Status</label>
             <select
               v-model="status"
               id="countries"
-              class="flex-initial relative mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="shadow-md flex mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option v-for="item in statusPage" :key="item.id">
                 {{ item }}
@@ -104,7 +103,7 @@
             <tbody>
               <template v-if="tableLoading">
                 <tr :style="tableLoading == true ? 'height:100px' : ''">
-                  <th colspan="4" class="text-center mt">
+                  <th colspan="6" class="text-center mt">
                     <div class="text-center">
                       <svg
                         role="status"
@@ -201,7 +200,7 @@
                 </template>
                 <template v-else>
                   <tr style="height: 100px">
-                    <th colspan="4" class="text-center mt">
+                    <th colspan="6" class="text-center mt">
                       <div class="text-center">
                         <span class="text-2xl">Tidak data</span>
                       </div>

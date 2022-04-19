@@ -74,7 +74,7 @@
             </div>
           </div>
 
-          <div class="sm:rounded-lg flex items-center w-1/5">
+          <div class="ml-5 relative sm:rounded-lg flex w-1/4 items-center">
             <label class="flex-initial mr-2 ml-5">Show</label>
             <select
               v-model="limit"
@@ -367,11 +367,11 @@ export default {
 
       this.$axios
         .get(`/product?limit=${this.limit}`)
-        .then((res) => {
+        .then(res => {
           this.isLoading = !this.isLoading
           this.dataTable = res.data.data
         })
-        .catch((e) => {
+        .catch(e => {
           this.isLoading = !this.isLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -384,14 +384,14 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`/product?limit=${this.limit}&name=${this.searchName}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
     },
     limitChange() {
       this.tableLoading = !this.tableLoading
-      this.$axios.get(`/product?limit=${this.limit}`).then((res) => {
+      this.$axios.get(`/product?limit=${this.limit}`).then(res => {
         this.tableLoading = !this.tableLoading
         this.dataTable = res.data.data
       })
@@ -405,7 +405,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.next_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -418,7 +418,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.prev_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -431,7 +431,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
@@ -449,7 +449,7 @@ export default {
             },
           }
         )
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
@@ -464,7 +464,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
@@ -479,7 +479,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
@@ -497,7 +497,7 @@ export default {
             },
           }
         )
-        .then((res) => {
+        .then(res => {
           this.$store.commit('app-mutation/SET_MUTATION', res.data)
           this.$store.commit('app-mutation/SET_LOADING', false)
         })

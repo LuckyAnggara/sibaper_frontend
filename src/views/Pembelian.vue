@@ -156,7 +156,7 @@
       </div>
     </div>
 
-    <div class="flex w-3/4 justify-end items-center">
+    <div class="mb-3 flex w-3/4 justify-end items-center">
       <label class="mr-5 text-sm font-medium text-gray-900 dark:text-gray-300 i"
         >Bukti / Keterangan</label
       >
@@ -170,6 +170,25 @@
       </div>
     </div>
 
+    <div class="flex w-3/4 justify-end items-center">
+      <label class="mr-5 text-sm font-medium text-gray-900 dark:text-gray-300 i"
+        >Lampiran</label
+      >
+      <div class="w-1/3">
+        <input
+          ref="myFileInput"
+          @change="onChange"
+          type="file"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        />
+      </div>
+    </div>
+    <div class="flex w-3/4 justify-end items-center">
+      <p class="text-xs mt-1 text-grey-600 dark:text-grey-500">
+        <span class="font-medium">* Type </span> | PDF | JPEG | JPG | PNG | ZIP
+        | RAR (10 MB Maks)
+      </p>
+    </div>
     <div
       class="mt-5 flex w-3/4 overflow-x-auto justify-end"
       v-if="detailPurchase.length > 0 ? true : false"
@@ -230,6 +249,7 @@ export default {
       notes: null,
       tanggal: null,
       detailPurchase: [],
+      file: '',
     }
   },
   computed: {
@@ -246,6 +266,48 @@ export default {
     },
   },
   methods: {
+    alertMessage(x) {
+      this.$swal.fire({
+        icon: 'error',
+        title: x,
+      })
+    },
+    onChange(e) {
+      if (e.target.files[0]) {
+        switch (e.target.files[0].type) {
+          case 'image/jpeg':
+            break
+          case 'image/png':
+            break
+          case 'image/jpg':
+            break
+          case 'image/bmp':
+            break
+          case 'application/pdf':
+            break
+          case 'application/x-rar-compressed':
+            break
+          case 'application/zip':
+            break
+          case 'application/x-zip-compressed':
+            break
+          default:
+            this.$refs.myFileInput.value = ''
+            this.alertMessage('Type file tidak sesuai')
+            return
+        }
+
+        if (e.target.files[0].size > 1024 * 1024 * 10) {
+          e.preventDefault()
+          this.alertMessage('File terlalu besar (> 10MB)')
+          return
+        } else {
+          this.file = e.target.files[0]
+        }
+      } else {
+        return
+      }
+    },
     toDaftarPembelian() {
       this.$router.push({ name: 'daftar-pembelian' })
     },
@@ -259,6 +321,24 @@ export default {
         toast: true,
       })
       this.toDaftarPembelian()
+    },
+    uploadingLampiran(master) {
+      let data = new FormData()
+      data.append('id', master.id)
+      data.append('lampiran', this.file)
+      this.$axios
+        .post(`/purchase/upload-lampiran`, data, {
+          headers: {
+            'content-type': 'multipart/form-data',
+            Authorization: `${this.token.token_type} ${this.token.access_token}`,
+          },
+        })
+        .then(res => {
+          this.loading = !this.loading
+          if (res.status == 200) {
+            this.success()
+          }
+        })
     },
     submit() {
       this.loading = !this.loading
@@ -278,13 +358,17 @@ export default {
           }
         )
         .then(res => {
-          this.loading = !this.loading
           if (res.status == 200) {
             this.$store.commit(
               'app-purchase/SET_PURCHASE_RESULT',
               res.data.data
             )
-            this.success()
+            if (this.file !== null) {
+              this.uploadingLampiran(res.data.data)
+            } else {
+              this.loading = !this.loading
+              this.success()
+            }
           }
         })
     },
