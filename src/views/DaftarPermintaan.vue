@@ -212,7 +212,7 @@
           </table>
         </div>
 
-        <div class="mt-5 flex flex-col items-center">
+        <div class="mt-5 flex flex-col items-center" v-if="!dataTable">
           <span class="text-sm text-gray-700 dark:text-gray-400">
             Data
             <span class="font-semibold text-gray-900 dark:text-white">{{
@@ -322,17 +322,17 @@ export default {
   },
   methods: {
     view(x) {
-      if (x.status === 'PENDING') {
-        this.$router.push({
-          name: 'detail-permintaan',
-          params: { no_ticket: x.no_ticket },
-        })
-      } else if (x.status === 'ACCEPT') {
-        this.$router.push({
-          name: 'output-ticket',
-          params: { no_ticket: x.no_ticket },
-        })
-      }
+      // if (x.status === 'PENDING') {
+      this.$router.push({
+        name: 'detail-permintaan',
+        params: { no_ticket: x.no_ticket },
+      })
+      // } else if (x.status === 'ACCEPT') {
+      //   this.$router.push({
+      //     name: 'output-ticket',
+      //     params: { no_ticket: x.no_ticket },
+      //   })
+      // }
     },
     getData() {
       this.tableLoading = !this.tableLoading

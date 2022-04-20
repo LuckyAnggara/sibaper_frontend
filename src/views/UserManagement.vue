@@ -1,5 +1,14 @@
 <template>
   <section class="py-10">
+    <vue-final-modal
+      v-model="showNewUserModal"
+      name="newUserModal"
+      classes="flex justify-center items-center"
+      content-class="relative p-4 w-full max-w-md h-full md:h-auto"
+      :prevent-click="isModalLoading"
+    >
+      <New-User-Modal @isModalLoading="modalLoading" @newUser="newUser" />
+    </vue-final-modal>
     <template v-if="!isLoading">
       <div class="text-center">
         <svg
@@ -63,6 +72,27 @@
               </option>
             </select>
           </div>
+
+          <div class="sm:rounded-lg grid w-5/6 items-end">
+            <button
+              @click="openNewUserModal"
+              type="button"
+              class="text-white justify-self-end bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              <svg
+                class="w-5 h-5 mr-2 -ml-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"
+                />
+              </svg>
+
+              Tambah
+            </button>
+          </div>
         </div>
 
         <div class="relative overflow-x-visible shadow-md sm:rounded-lg">
@@ -109,7 +139,11 @@
               <template v-else>
                 <template v-if="dataTable.data.length > 0 ? true : false">
                   <tr
-                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    :class="[
+                      index == 0 && baru == true
+                        ? 'bg-green-100 border-b dark:bg-green-800 dark:border-gray-700'
+                        : 'bg-white border-b dark:bg-gray-800 dark:border-gray-700',
+                    ]"
                     v-for="(item, index) in dataTable.data"
                     :key="item.id"
                   >
@@ -285,6 +319,7 @@
 </template>
 
 <script>
+import NewUserModal from './component/NewUserModal.vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 
 export default {
@@ -293,9 +328,12 @@ export default {
     MenuButton,
     MenuItem,
     MenuItems,
+    NewUserModal,
   },
   data() {
     return {
+      isModalLoading: false,
+      showNewUserModal: false,
       tableLoading: false,
       search: null,
       dataTable: null,
@@ -306,6 +344,7 @@ export default {
           : localStorage.getItem('limit'),
       isLoading: true,
       error: false,
+      baru: false,
     }
   },
   watch: {
@@ -330,6 +369,16 @@ export default {
     },
   },
   methods: {
+    newUser() {
+      this.getData()
+      this.baru = true
+    },
+    modalLoading() {
+      this.isModalLoading = !this.isModalLoading
+    },
+    openNewUserModal() {
+      this.$vfm.show('newUserModal')
+    },
     success(x) {
       this.$swal({
         position: 'top-end',
@@ -351,7 +400,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -365,7 +414,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 if (res.status == 200) {
                   this.success('Reset password berhasil')
                 }
@@ -386,7 +435,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -401,7 +450,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 if (res.status == 200) {
                   this.success('Status user berhasil di ubah')
                   this.getData()
@@ -411,6 +460,7 @@ export default {
         })
     },
     getData() {
+      this.baru = false
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`/user?limit=${this.limit}`, {
@@ -418,11 +468,11 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
-        .catch((e) => {
+        .catch(e => {
           this.tableLoading = !this.tableLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -443,7 +493,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -456,7 +506,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -474,7 +524,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -492,7 +542,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
