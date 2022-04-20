@@ -5,7 +5,6 @@ import './index.css'
 import Vuex from 'vuex'
 import VueSweetalert2 from 'vue-sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
-import 'flowbite'
 
 import moment from 'moment'
 import vfmPlugin from 'vue-final-modal'
