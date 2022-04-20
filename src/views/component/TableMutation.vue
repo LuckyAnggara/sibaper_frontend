@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-full bg-white rounded-lg shadow dark:bg-gray-700">
+  <div class="">
     <div class="flex justify-end p-2">
       <h3 class="px-4 py-5 text-xl font-medium text-gray-900 dark:text-white">
         Tabel mutasi persediaan

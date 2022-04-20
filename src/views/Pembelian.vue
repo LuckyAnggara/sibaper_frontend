@@ -110,6 +110,7 @@
               <input
                 :disabled="loading"
                 v-model="detailPurchase[index].quantity"
+                min="0"
                 type="number"
                 class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
@@ -308,9 +309,6 @@ export default {
         return
       }
     },
-    toDaftarPembelian() {
-      this.$router.push({ name: 'daftar-pembelian' })
-    },
     success() {
       this.$swal({
         position: 'top-end',
@@ -320,7 +318,6 @@ export default {
         timer: 1500,
         toast: true,
       })
-      this.toDaftarPembelian()
     },
     uploadingLampiran(master) {
       let data = new FormData()
@@ -334,9 +331,22 @@ export default {
           },
         })
         .then(res => {
+          console.info(res)
           this.loading = !this.loading
           if (res.status == 200) {
-            this.success()
+          } else if (res.status == 206) {
+            this.$swal
+              .fire({
+                icon: 'error',
+                title: res.data.lampiran[0],
+              })
+              .then(x => {
+                this.success()
+                this.$router.push({
+                  name: 'detail-pembelian',
+                  params: { id: master.id },
+                })
+              })
           }
         })
     },
@@ -364,10 +374,13 @@ export default {
               res.data.data
             )
             if (this.file !== null) {
-              console.info('aaa')
               this.uploadingLampiran(res.data.data)
             } else {
               this.loading = !this.loading
+              this.$router.push({
+                name: 'detail-pembelian',
+                params: { id: res.data.data.id },
+              })
               this.success()
             }
           }

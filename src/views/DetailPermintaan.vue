@@ -1,6 +1,6 @@
 <template>
   <form autocomplete="off" @submit.prevent="submit">
-    <div class="flex flex-row w-full justify-between">
+    <div class="flex flex-row w-full justify-between overflow-auto">
       <div
         class="p-6 w-2/5 bg-gray-200 rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
       >
@@ -105,7 +105,7 @@
         </template>
       </div>
       <div class="w-3/4 flex-col ml-10">
-        <div class="flex overflow-x-auto shadow-lg rounded-lg">
+        <div class="flex overflow-auto shadow-lg rounded-lg">
           <table
             class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
           >
@@ -158,14 +158,14 @@
                   {{ item.product.quantity }}
                 </th>
                 <th
-                  class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                  class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap flex-row flex"
                 >
                   <template v-if="masterRequest.status == 'PENDING'">
                     <input
                       :disabled="loading"
                       v-model="detailRequest[index].quantity"
                       type="number"
-                      class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      class="block p-2 w-1/2 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     />
                     <template
                       v-if="
@@ -208,6 +208,7 @@
                 <th
                   scope="row"
                   class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                  v-if="masterRequest.status == 'ACCEPT'"
                 >
                   {{ item.acc_quantity }}
                 </th>
@@ -300,7 +301,7 @@ export default {
         toast: true,
       })
       this.$router.push({
-        name: 'detail-pembelian',
+        name: 'detail-permintaan',
         params: { id: this.masterRequest.id },
       })
     },
@@ -373,7 +374,7 @@ export default {
           },
         })
         .then(res => {
-          window.open(`http://127.0.0.1:8000/${res.data}`)
+          link.href = `http://127.0.0.1:8000/${res.data}`
           // this.$axios({
           //   url: `${res.data}`,
           // })

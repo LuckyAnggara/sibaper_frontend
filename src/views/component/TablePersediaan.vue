@@ -4,7 +4,7 @@
       v-model="showNewItemModal"
       name="newItemModal"
       classes="flex justify-center items-center"
-      content-class="relative p-4 w-full max-w-md h-full md:h-auto"
+      content-class="relative p-4 w-full max-w-md  md:h-auto "
       :prevent-click="isModalLoading"
     >
       <Item-Modal @isModalLoading="modalLoading" @newItem="newItem" />
@@ -13,7 +13,7 @@
       v-model="showMutationModal"
       name="mutationModal"
       classes="flex justify-center items-center"
-      content-class="flex p-4 w-full max-w-[60%] h-512 "
+      content-class="flex p-4  max-w-[60%] h-3/4  bg-white rounded-lg shadow dark:bg-gray-700 overflow-scroll"
     >
       <TableMutation
         @limitChange="mutationLimitChange"
