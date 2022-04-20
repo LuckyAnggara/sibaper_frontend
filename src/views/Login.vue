@@ -66,8 +66,6 @@
 
 <script>
 import { LockClosedIcon } from '@heroicons/vue/solid'
-import { getHomeRouteForLoggedInUser } from '../auth'
-import { getNavigation } from '../routes'
 
 export default {
   components: {
@@ -87,6 +85,10 @@ export default {
     },
   },
   methods: {
+    reset() {
+      this.nip = null
+      this.password = null
+    },
     successLogin() {
       this.$toast.open({
         message: `Selamat datang ${this.userData.name}`,
@@ -104,6 +106,17 @@ export default {
         position: 'top',
         dismissible: true,
       })
+      this.reset()
+    },
+    deactive() {
+      this.$toast.open({
+        message: 'Status user Deactive, Hubungi Admin',
+        type: 'error',
+        duration: 2000,
+        position: 'top',
+        dismissible: true,
+      })
+      this.reset()
     },
     login() {
       const data = {
@@ -123,16 +136,17 @@ export default {
             })
             .then((res) => {
               this.loading = !this.loading
+              if (res.status == 200) {
+                localStorage.setItem('userData', JSON.stringify(res.data))
+                localStorage.setItem('token', JSON.stringify(response.data))
 
-              localStorage.setItem('userData', JSON.stringify(res.data))
-              localStorage.setItem('token', JSON.stringify(response.data))
+                this.$store.commit('app-user/SET_USER_DATA')
+                this.$store.commit('app-user/SET_TOKEN')
 
-              this.$store.commit('app-user/SET_USER_DATA')
-              this.$store.commit('app-user/SET_TOKEN')
-
-              if (this.userData) {
-                this.$router.push({ name: 'home' })
-                this.successLogin()
+                if (this.userData) {
+                  this.$router.push({ name: 'home' })
+                  this.successLogin()
+                }
               }
             })
         })
@@ -141,6 +155,8 @@ export default {
           const error = e.toJSON()
           if (error.status == '401') {
             this.errorNipPwEmpty()
+          } else if (error.status == '403') {
+            this.deactive()
           }
           this.loginLoading = !this.loginLoading
         })

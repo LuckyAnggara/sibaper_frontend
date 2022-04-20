@@ -44,7 +44,7 @@
                 </svg>
               </div>
               <input
-                v-model="notes"
+                v-model="search"
                 type="text"
                 class="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search.."
@@ -65,7 +65,7 @@
           </div>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <div class="relative overflow-x-visible shadow-md sm:rounded-lg">
           <table
             class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
           >
@@ -74,22 +74,17 @@
             >
               <tr>
                 <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
-                <th scope="col" class="px-6 py-3" style="width: 20%">
-                  Tanggal Pembelian
-                </th>
-                <th scope="col" class="px-6 py-3" style="width: 40%">
-                  Bukti / Keterangan
-                </th>
-                <th scope="col" class="px-6 py-3" style="width: 10%">
-                  Lampiran
-                </th>
+                <th scope="col" class="px-6 py-3" style="width: 25%">NIP</th>
+                <th scope="col" class="px-6 py-3" style="width: 25%">Nama</th>
+                <th scope="col" class="px-6 py-3" style="width: 25%">Bagian</th>
+                <th scope="col" class="px-6 py-3" style="width: 15%">Status</th>
                 <th scope="col" class="px-6 py-3" style="width: 5%">Action</th>
               </tr>
             </thead>
             <tbody>
               <template v-if="tableLoading">
                 <tr :style="tableLoading == true ? 'height:100px' : ''">
-                  <th colspan="4" class="text-center mt">
+                  <th colspan="6" class="text-center mt">
                     <div class="text-center">
                       <svg
                         role="status"
@@ -124,64 +119,94 @@
                     >
                       {{ dataTable.from + index }}
                     </th>
+                    <th
+                      scope="row"
+                      class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                    >
+                      {{ item.nip }}
+                    </th>
                     <td class="px-6 py-4">
-                      {{ this.$moment(item.created_at).format('DD MMMM YYYY') }}
+                      {{ item.name }}
                     </td>
                     <td class="px-6 py-4">
-                      {{ item.notes }}
+                      {{ item.bagian }}
                     </td>
-                    <td class="px-6 py-4 text-center items-center">
-                      <button
-                        @click="download(item.id)"
-                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          stroke-width="2"
+                    <td class="px-6 py-4">
+                      <template v-if="item.status == 'ACTIVE'">
+                        <span
+                          class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900"
+                          >{{ item.status }}</span
                         >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                          />
-                        </svg>
-                      </button>
+                      </template>
+                      <template v-else-if="item.status == 'DEACTIVE'">
+                        <span
+                          class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900"
+                          >{{ item.status }}</span
+                        >
+                      </template>
                     </td>
-                    <td class="px-6 py-4 text-center">
-                      <button
-                        @click="view(item.id)"
-                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          stroke-width="2"
+                    <td class="px-6 py-4 text-left">
+                      <Menu as="div" class="ml-3">
+                        <div>
+                          <MenuButton
+                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-6 w-6"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                              />
+                            </svg>
+                          </MenuButton>
+                        </div>
+                        <transition
+                          enter-active-class="transition ease-out duration-100"
+                          enter-from-class="transform opacity-0 scale-95"
+                          enter-to-class="transform opacity-100 scale-100"
+                          leave-active-class="transition ease-in duration-75"
+                          leave-from-class="transform opacity-100 scale-100"
+                          leave-to-class="transform opacity-0 scale-95"
                         >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      </button>
+                          <MenuItems
+                            class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                          >
+                            <MenuItem>
+                              <a
+                                @click="reset_password(item.id)"
+                                href="#"
+                                class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                                >Reset Password</a
+                              >
+                            </MenuItem>
+                            <MenuItem>
+                              <a
+                                @click="active_deactive(item)"
+                                href="#"
+                                class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                                >{{
+                                  item.status == 'ACTIVE'
+                                    ? 'Deactive User'
+                                    : 'Active User'
+                                }}</a
+                              >
+                            </MenuItem>
+                          </MenuItems>
+                        </transition>
+                      </Menu>
                     </td>
                   </tr>
                 </template>
                 <template v-else>
                   <tr style="height: 100px">
-                    <th colspan="4" class="text-center mt">
+                    <th colspan="6" class="text-center mt">
                       <div class="text-center">
                         <span class="text-2xl">Tidak data</span>
                       </div>
@@ -193,7 +218,7 @@
           </table>
         </div>
 
-        <div class="mt-5 flex flex-col items-center">
+        <div class="mt-5 flex flex-col items-center" v-if="dataTable != null">
           <span class="text-sm text-gray-700 dark:text-gray-400">
             Data
             <span class="font-semibold text-gray-900 dark:text-white">{{
@@ -260,11 +285,19 @@
 </template>
 
 <script>
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+
 export default {
+  components: {
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+  },
   data() {
     return {
       tableLoading: false,
-      notes: null,
+      search: null,
       dataTable: null,
       limitPage: [5, 10, 25, 100],
       limit:
@@ -280,7 +313,11 @@ export default {
       localStorage.setItem('limit', e)
       this.getData()
     },
-    notes() {
+    status(e) {
+      localStorage.setItem('status', e)
+      this.getData()
+    },
+    search() {
       this.searchChange()
     },
   },
@@ -293,33 +330,100 @@ export default {
     },
   },
   methods: {
-    download(id) {
-      this.$axios.get(`/purchase/get-file?id=${id}`, {
-        headers: {
-          Authorization: `${this.token.token_type} ${this.token.access_token}`,
-        },
+    success(x) {
+      this.$swal({
+        position: 'top-end',
+        icon: 'success',
+        title: x,
+        showConfirmButton: false,
+        timer: 1500,
+        toast: true,
       })
     },
-    view(x) {
-      this.$router.push({
-        name: 'detail-pembelian',
-        params: { id: x },
-      })
+    reset_password(id) {
+      this.$swal
+        .fire({
+          title: 'Reset?',
+          text: 'Lakukan reset password ?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Proses!',
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$axios
+              .post(
+                `/user/reset-password`,
+                {
+                  id: id,
+                },
+                {
+                  headers: {
+                    Authorization: `${this.token.token_type} ${this.token.access_token}`,
+                  },
+                }
+              )
+              .then((res) => {
+                if (res.status == 200) {
+                  this.success('Reset password berhasil')
+                }
+              })
+          }
+        })
+    },
+    active_deactive(item) {
+      this.$swal
+        .fire({
+          title: 'Ubah Status?',
+          text: `User akan di ${
+            item.status == 'ACTIVE' ? 'DEACTIVE' : 'ACTIVE'
+          } kan!`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Proses!',
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$axios
+              .post(
+                `/user/ubah-status`,
+                {
+                  id: item.id,
+                  status: item.status == 'ACTIVE' ? 'DEACTIVE' : 'ACTIVE',
+                },
+                {
+                  headers: {
+                    Authorization: `${this.token.token_type} ${this.token.access_token}`,
+                  },
+                }
+              )
+              .then((res) => {
+                if (res.status == 200) {
+                  this.success('Status user berhasil di ubah')
+                  this.getData()
+                }
+              })
+          }
+        })
     },
     getData() {
-      this.isLoading = !this.isLoading
+      this.tableLoading = !this.tableLoading
       this.$axios
-        .get(`/purchase?limit=${this.limit}`, {
+        .get(`/user?limit=${this.limit}`, {
           headers: {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
         .then((res) => {
-          this.isLoading = !this.isLoading
+          this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
         .catch((e) => {
-          this.isLoading = !this.isLoading
+          this.tableLoading = !this.tableLoading
           this.dataTable = {}
           const error = e.toJSON()
           if (e.name == 'Error') {
@@ -328,9 +432,13 @@ export default {
         })
     },
     searchChange() {
+      if (this.search == '' || null) {
+        this.getData()
+        return
+      }
       this.tableLoading = !this.tableLoading
       this.$axios
-        .get(`/purchase?limit=${this.limit}&notes=${this.notes}`, {
+        .get(`/user?limit=${this.limit}&search=${this.search}`, {
           headers: {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
@@ -343,7 +451,7 @@ export default {
     limitChange() {
       this.tableLoading = !this.tableLoading
       this.$axios
-        .get(`/purchase?limit=${this.limit}`, {
+        .get(`/user?limit=${this.limit}`, {
           headers: {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
@@ -355,8 +463,8 @@ export default {
     },
     next() {
       let params = ''
-      if (this.notes !== null || '') {
-        params = `&notes=${this.notes}`
+      if (this.search !== null || '') {
+        params = `&search=${this.search}`
       }
 
       this.tableLoading = !this.tableLoading
@@ -373,8 +481,8 @@ export default {
     },
     previous() {
       let params = ''
-      if (this.notes !== null || '') {
-        params = `&notes=${this.notes}`
+      if (this.search !== null || '') {
+        params = `&search=${this.search}`
       }
 
       this.tableLoading = !this.tableLoading

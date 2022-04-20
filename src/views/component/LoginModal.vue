@@ -113,6 +113,10 @@ export default {
     },
   },
   methods: {
+    reset() {
+      this.nip = null
+      this.password = null
+    },
     successLogin() {
       this.$toast.open({
         message: `Selamat datang ${this.userData.name}`,
@@ -130,6 +134,17 @@ export default {
         position: 'top',
         dismissible: true,
       })
+      this.reset()
+    },
+    deactive() {
+      this.$toast.open({
+        message: 'Status user Deactive, Hubungi Admin',
+        type: 'error',
+        duration: 2000,
+        position: 'top',
+        dismissible: true,
+      })
+      this.reset()
     },
     login() {
       const data = {
@@ -139,7 +154,7 @@ export default {
       this.loginLoading = !this.loginLoading
       this.$axios
         .post(`/login`, data)
-        .then(response => {
+        .then((response) => {
           if (response.status == 200) {
             this.$axios
               .get(`/profile`, {
@@ -147,7 +162,7 @@ export default {
                   Authorization: `${response.data.token_type} ${response.data.access_token}`,
                 },
               })
-              .then(res => {
+              .then((res) => {
                 this.loginLoading = !this.loginLoading
                 //SET DATA KE DALAM LOCAL STORAGE
                 localStorage.setItem('token', JSON.stringify(response.data))
@@ -164,10 +179,12 @@ export default {
           }
           // get data profile setelah dapat token login
         })
-        .catch(e => {
+        .catch((e) => {
           const error = e.toJSON()
           if (error.status == '401') {
             this.errorNipPwEmpty()
+          } else if (error.status == '403') {
+            this.deactive()
           }
           this.loginLoading = !this.loginLoading
         })

@@ -6,7 +6,7 @@ import Pembelian from './views/Pembelian.vue'
 import DaftarPembelian from './views/DaftarPembelian.vue'
 import DetailPembelian from './views/DetailPembelian.vue'
 import DetailPermintaan from './views/DetailPermintaan.vue'
-import Table from './views/component/Table.vue'
+import UserManagement from './views/UserManagement.vue'
 import Login from './views/Login.vue'
 import Profile from './views/ProfilePage.vue'
 import Persediaan from './views/Persediaan.vue'
@@ -109,6 +109,15 @@ export const routes = [
     },
   },
   {
+    path: '/user-management',
+    name: 'user-management',
+    component: UserManagement,
+    meta: {
+      title: 'User Management',
+      layout: 'layout-normal',
+    },
+  },
+  {
     path: '/login',
     name: 'login',
     component: Login,
@@ -157,6 +166,7 @@ const admin = [
   { name: 'Persediaan', href: 'persediaan' },
   { name: 'Pembelian', href: 'pembelian' },
   { name: 'Daftar Permintaan', href: 'daftar-permintaan' },
+  { name: 'User Management', href: 'user-management' },
 ]
 
 export const getNavigation = () => {

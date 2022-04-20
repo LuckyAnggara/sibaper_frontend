@@ -220,7 +220,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then(result => {
+        .then((result) => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -235,7 +235,7 @@ export default {
                   },
                 }
               )
-              .then(res => {
+              .then((res) => {
                 this.loading = !this.loading
                 this.error = false
                 if (res.status == 200) {
@@ -250,7 +250,7 @@ export default {
                   })
                 }
               })
-              .catch(e => {
+              .catch((e) => {
                 this.loading = !this.loading
                 const error = e.toJSON()
                 if (error.status == 422) {
@@ -275,7 +275,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then(result => {
+        .then((result) => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -290,7 +290,7 @@ export default {
                   },
                 }
               )
-              .then(res => {
+              .then((res) => {
                 this.loadingChange = !this.loadingChange
                 this.error = false
                 if (res.status == 200) {
@@ -305,7 +305,7 @@ export default {
                   })
                 }
               })
-              .catch(e => {
+              .catch((e) => {
                 this.loadingChange = !this.loadingChange
                 const error = e.toJSON()
                 if (error.status == 422) {
