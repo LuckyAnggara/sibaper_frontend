@@ -61,19 +61,21 @@
 
           <div class="flex justify-between mb-8">
             <div>
-              {{ dataRequest.user.name }}<br />
-              {{ dataRequest.user.nip }}
+              Nama : {{ dataRequest.user.name }}<br />
+              NIP : {{ dataRequest.user.nip }}<br />
+              Bagian : {{ dataRequest.user.bagian }}
             </div>
           </div>
 
           <div class="border border-t-2 border-gray-200 mb-8"></div>
           <div>
+            <span class="font-medium"> Daftar Permintaan Persediaan </span>
             <div
               v-for="item in dataRequest.detail.filter(
                 x => x.status != 'REJECT'
               )"
               :key="item.id"
-              class="flex justify-between mb-4 bg-gray-200 px-3 py-2"
+              class="mt-5 flex justify-between mb-4 bg-gray-200 px-3 py-2"
             >
               <div>{{ item.product.name }}</div>
               <div class="text-right font-medium">

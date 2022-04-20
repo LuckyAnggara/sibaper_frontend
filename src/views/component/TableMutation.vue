@@ -240,6 +240,14 @@ export default {
       return this.$store.getters['app-mutation/getLoading']
     },
     dataTable() {
+      let saldo = 0
+      this.masterData.data.forEach(x => {
+        saldo = saldo + x.debit - x.kredit
+        x.saldo = saldo
+      })
+      this.masterData.data.sort((a, b) => {
+        return b.id - a.id
+      })
       return this.masterData.data
     },
     masterData() {

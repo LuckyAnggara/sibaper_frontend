@@ -249,7 +249,7 @@ export default {
       notes: null,
       tanggal: null,
       detailPurchase: [],
-      file: '',
+      file: null,
     }
   },
   computed: {
@@ -364,6 +364,7 @@ export default {
               res.data.data
             )
             if (this.file !== null) {
+              console.info('aaa')
               this.uploadingLampiran(res.data.data)
             } else {
               this.loading = !this.loading
