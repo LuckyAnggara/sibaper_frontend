@@ -307,7 +307,7 @@ export default {
         })
         .then((res) => {
           this.$axios({
-            baseURL: 'http://192.168.16.128:8000/',
+            baseURL: 'http://192.168.16.122:8000/',
             url: `${res.data}`,
           })
         })
