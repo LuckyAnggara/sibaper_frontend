@@ -30,6 +30,67 @@
           <template v-if="userData">
             <div class="hidden md:block">
               <div class="ml-4 flex items-center md:ml-6">
+                <!-- Notification -->
+                <!-- <Menu as="div" class="ml-3 relative">
+                  <div>
+                    <MenuButton
+                      class="bg-white p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                    >
+                      <span class="sr-only">View notifications</span>
+                      <svg
+                        class="h-6 w-6"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="black"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                        />
+                      </svg>
+                    </MenuButton>
+                  </div>
+                  <transition
+                    enter-active-class="transition ease-out duration-100"
+                    enter-from-class="transform opacity-0 scale-95"
+                    enter-to-class="transform opacity-100 scale-100"
+                    leave-active-class="transition ease-in duration-75"
+                    leave-from-class="transform opacity-100 scale-100"
+                    leave-to-class="transform opacity-0 scale-95"
+                  >
+                    <MenuItems
+                      class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    >
+                      <MenuItem>
+                        <a
+                          href="profile-page"
+                          class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                          >{{ userData.name }}</a
+                        >
+                      </MenuItem>
+                      <MenuItem>
+                        <a
+                          href="#"
+                          class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                          >History</a
+                        >
+                      </MenuItem>
+                      <MenuItem>
+                        <a
+                          @click="logout"
+                          href="#"
+                          class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                          >Sign Out</a
+                        >
+                      </MenuItem>
+                    </MenuItems>
+                  </transition>
+                </Menu> -->
+
                 <!-- Profile dropdown -->
                 <Menu as="div" class="ml-3 relative">
                   <div>
@@ -39,7 +100,7 @@
                       <span class="sr-only">Open user menu</span>
                       <img
                         class="h-10 w-10 rounded-full"
-                        :src="user.imageUrl"
+                        :src="avatar"
                         alt=""
                       />
                     </MenuButton>
@@ -124,14 +185,11 @@
             >{{ item.name }}</DisclosureButton
           >
         </div>
+
         <div class="pt-4 pb-3 border-t border-gray-700">
           <div class="flex items-center px-5">
             <div class="flex-shrink-0">
-              <img
-                class="h-10 w-10 rounded-full"
-                src="../../assets/avatar.png"
-                alt=""
-              />
+              <img class="h-10 w-10 rounded-full" :src="avatar" alt="" />
             </div>
             <div class="ml-3">
               <div class="text-base font-medium leading-none text-white">
@@ -141,21 +199,20 @@
                 {{ userData.nip }}
               </div>
             </div>
-            <button
-              type="button"
-              class="ml-auto bg-gray-800 flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-            >
-              <span class="sr-only">View notifications</span>
-              <BellIcon class="h-6 w-6" aria-hidden="true" />
-            </button>
           </div>
           <div class="mt-3 px-2 space-y-1">
             <DisclosureButton
-              v-for="item in userNavigation"
+              v-for="item in navigation"
               :key="item.name"
               as="a"
               :href="item.href"
-              class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+              :class="[
+                item.name.toLowerCase() == $route.name
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                'block px-3 py-2 rounded-md text-base font-medium',
+              ]"
+              :aria-current="item.name == $route.name ? 'page' : undefined"
               >{{ item.name }}</DisclosureButton
             >
           </div>
@@ -215,8 +272,8 @@ import {
 import { RouterLink } from 'vue-router'
 import { VueFinalModal, $vfm } from 'vue-final-modal'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
-import { getNavigation } from '../../routes'
 import LoginModal from '../component/LoginModal.vue'
+import avatar from '../../assets/avatar.png'
 
 const user = {
   name: 'Tom Cook',
@@ -284,7 +341,7 @@ export default {
   setup() {
     return {
       user,
-      userNavigation,
+      avatar,
     }
   },
 }

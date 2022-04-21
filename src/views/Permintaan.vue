@@ -232,6 +232,7 @@ export default {
       dataProduct: [],
       name: null,
       detailRequest: [],
+      notes: null,
     }
   },
   computed: {
@@ -289,7 +290,7 @@ export default {
                 `/request/store`,
                 {
                   user_id: this.userData.id,
-                  notes: 'Test',
+                  notes: this.notes,
                   detail: this.detailRequest,
                 },
                 {
