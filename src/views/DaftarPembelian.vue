@@ -299,18 +299,17 @@ export default {
   },
   methods: {
     download(id) {
-      this.$axios
-        .get(`/purchase/get-file?id=${id}`, {
-          headers: {
-            Authorization: `${this.token.token_type} ${this.token.access_token}`,
-          },
-        })
-        .then((res) => {
-          this.$axios({
-            baseURL: 'http://192.168.16.122:8000/',
-            url: `${res.data}`,
-          })
-        })
+      this.$axios.get(`/purchase/get-file?id=${id}`, {
+        headers: {
+          Authorization: `${this.token.token_type} ${this.token.access_token}`,
+        },
+      })
+      // .then((res) => {
+      //   this.$axios({
+      //     baseURL: 'http://192.168.16.122:8000/',
+      //     url: `${res.data}`,
+      //   })
+      // })
     },
     view(x) {
       this.$router.push({
