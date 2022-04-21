@@ -302,16 +302,9 @@ export default {
       this.$axios({
         url: `/purchase/get-file?id=${id}`,
         method: 'GET',
-        responseType: 'arraybuffer',
         headers: {
           Authorization: `${this.token.token_type} ${this.token.access_token}`,
         },
-      }).then((res) => {
-        let url = `192.168.16.122:8000/${res.data}`
-        let link = document.createElement('a')
-        link.href = window.URL.createObjectURL(url)
-        link.download = url
-        link.click()
       })
     },
     view(x) {

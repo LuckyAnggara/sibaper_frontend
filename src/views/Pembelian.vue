@@ -360,11 +360,7 @@ export default {
       this.$swal
         .fire({
           title: 'Proses?',
-          text:
-            this.error > 0
-              ? 'Masih ada permintaan persediaan yang melebihi Saldo tersedia, tetap Proses?'
-              : 'Proses permintaan persediaan ?',
-          icon: this.error > 0 ? 'warning' : 'info',
+          icon: 'info',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
