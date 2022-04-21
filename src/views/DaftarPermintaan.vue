@@ -287,10 +287,8 @@ export default {
       dataTable: null,
       limitPage: [5, 10, 25, 100],
       statusPage: ['SEMUA', 'PENDING', 'ACCEPT', 'REJECT'],
-      status:
-        localStorage.getItem('status') === ('' || null)
-          ? 'SEMUA'
-          : localStorage.getItem('status'),
+      status: 'SEMUA',
+
       limit:
         localStorage.getItem('limit') === ('' || null)
           ? 5
@@ -342,11 +340,11 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
-        .catch(e => {
+        .catch((e) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -367,7 +365,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -380,7 +378,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -398,7 +396,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -416,7 +414,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })

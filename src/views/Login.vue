@@ -48,17 +48,18 @@
             />
           </svg>
         </div>
-
+        <!-- 
         <div
           class="flex items-center justify-center border-t-[1px] border-t-slate-300 w-full relative"
         >
           <div class="-mt-1 font-bod bg-white px-5 absolute">atau</div>
+        </div> -->
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
+          Belum punya akun? <br />
+          <a class="text-blue-700 hover:underline dark:text-blue-500"
+            >Hubungi Admin untuk membuat Akun baru</a
+          >
         </div>
-        <button
-          class="w-full border-blue-900 hover:border-[#003087] hover:border-[2px] border-[1px] rounded-3xl p-3 text-[#0070ba] font-bold transition duration-200"
-        >
-          Belum punya Akun?
-        </button>
       </div>
     </div>
   </div>
@@ -73,6 +74,7 @@ export default {
   },
   data() {
     return {
+      belumPunya: true,
       loading: false,
       info: null,
       nip: null,

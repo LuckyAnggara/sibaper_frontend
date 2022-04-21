@@ -88,8 +88,8 @@
       </button>
       <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
         Belum punya akun?
-        <a href="#" class="text-blue-700 hover:underline dark:text-blue-500"
-          >Buat akun</a
+        <a class="text-blue-700 hover:underline dark:text-blue-500"
+          >Hubungi Admin untuk membuat Akun baru</a
         >
       </div>
     </form>
