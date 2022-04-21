@@ -158,6 +158,22 @@
       </p>
     </div>
     <div
+      class="mt-5 flex w-3/4 justify-end items-center"
+      v-if="detailRequest.length > 0 ? true : false"
+    >
+      <label class="mr-5 text-sm font-medium text-gray-900 dark:text-gray-300 i"
+        >Catatan
+      </label>
+      <div class="w-1/3">
+        <textarea
+          v-model="notes"
+          type="text"
+          class="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Optional"
+        />
+      </div>
+    </div>
+    <div
       class="mt-10 flex w-3/4 overflow-x-auto justify-end"
       v-if="detailRequest.length > 0 ? true : false"
     >
@@ -221,7 +237,7 @@ export default {
   computed: {
     error() {
       let total = 0
-      this.detailRequest.forEach(x => {
+      this.detailRequest.forEach((x) => {
         if (x.real_quantity < x.quantity) {
           total += 1
         }
@@ -266,7 +282,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then(result => {
+        .then((result) => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -282,7 +298,7 @@ export default {
                   },
                 }
               )
-              .then(res => {
+              .then((res) => {
                 this.loading = !this.loading
                 if (res.status == 200) {
                   this.$store.commit(
@@ -296,7 +312,7 @@ export default {
                   })
                 }
               })
-              .catch(e => {
+              .catch((e) => {
                 this.loading = !this.loading
                 const error = e.toJSON()
               })
@@ -309,9 +325,9 @@ export default {
       this.detailRequest.splice(index, 1)
     },
     pilihItem(data) {
-      const b = this.detailRequest.find(d => d.id === data.id)
+      const b = this.detailRequest.find((d) => d.id === data.id)
       if (b) {
-        const index = this.detailRequest.findIndex(d => d.id === data.id)
+        const index = this.detailRequest.findIndex((d) => d.id === data.id)
         this.detailRequest[index].quantity += 1
       } else {
         this.detailRequest.push({
@@ -330,10 +346,10 @@ export default {
       } else {
         this.$axios
           .get(`/product?name=${string}`)
-          .then(res => {
+          .then((res) => {
             this.dataProduct = res.data.data.data
           })
-          .catch(e => {
+          .catch((e) => {
             this.dataProduct = null
           })
       }

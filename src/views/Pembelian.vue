@@ -357,37 +357,53 @@ export default {
     },
     submit() {
       this.loading = !this.loading
-      this.$axios
-        .post(
-          `/purchase/store`,
-          {
-            user_id: this.userData.id,
-            notes: this.notes,
-            tanggal: this.tanggal,
-            detail: this.detailPurchase,
-          },
-          {
-            headers: {
-              Authorization: `${this.token.token_type} ${this.token.access_token}`,
-            },
-          }
-        )
-        .then((res) => {
-          if (res.status == 200) {
-            this.$store.commit(
-              'app-purchase/SET_PURCHASE_RESULT',
-              res.data.data
-            )
-            if (this.file !== null) {
-              this.uploadingLampiran(res.data.data)
-            } else {
-              this.loading = !this.loading
-              this.$router.push({
-                name: 'detail-pembelian',
-                params: { id: res.data.data.id },
+      this.$swal
+        .fire({
+          title: 'Proses?',
+          text:
+            this.error > 0
+              ? 'Masih ada permintaan persediaan yang melebihi Saldo tersedia, tetap Proses?'
+              : 'Proses permintaan persediaan ?',
+          icon: this.error > 0 ? 'warning' : 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Proses!',
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$axios
+              .post(
+                `/purchase/store`,
+                {
+                  user_id: this.userData.id,
+                  notes: this.notes,
+                  tanggal: this.tanggal,
+                  detail: this.detailPurchase,
+                },
+                {
+                  headers: {
+                    Authorization: `${this.token.token_type} ${this.token.access_token}`,
+                  },
+                }
+              )
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$store.commit(
+                    'app-purchase/SET_PURCHASE_RESULT',
+                    res.data.data
+                  )
+                  if (this.file !== null) {
+                    this.uploadingLampiran(res.data.data)
+                  }
+                  this.loading = !this.loading
+                  this.$router.push({
+                    name: 'detail-pembelian',
+                    params: { id: res.data.data.id },
+                  })
+                  this.success()
+                }
               })
-              this.success()
-            }
           }
         })
     },

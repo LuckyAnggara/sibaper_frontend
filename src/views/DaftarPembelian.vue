@@ -299,17 +299,20 @@ export default {
   },
   methods: {
     download(id) {
-      this.$axios.get(`/purchase/get-file?id=${id}`, {
+      this.$axios({
+        url: `/purchase/get-file?id=${id}`,
+        method: 'GET',
+        responseType: 'arraybuffer',
         headers: {
           Authorization: `${this.token.token_type} ${this.token.access_token}`,
         },
+      }).then((response) => {
+        let blob = new Blob([response.data])
+        let link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = 'test.pdf'
+        link.click()
       })
-      // .then((res) => {
-      //   this.$axios({
-      //     baseURL: 'http://192.168.16.122:8000/',
-      //     url: `${res.data}`,
-      //   })
-      // })
     },
     view(x) {
       this.$router.push({
