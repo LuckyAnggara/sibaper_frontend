@@ -305,9 +305,9 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.$axios({
-            baseURL: 'http://127.0.0.1:8000/',
+            baseURL: 'http://192.168.16.128:8000/',
             url: `${res.data}`,
           })
         })
@@ -326,11 +326,11 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.isLoading = !this.isLoading
           this.dataTable = res.data.data
         })
-        .catch(e => {
+        .catch((e) => {
           this.isLoading = !this.isLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -347,7 +347,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -360,7 +360,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -378,7 +378,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -396,7 +396,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
