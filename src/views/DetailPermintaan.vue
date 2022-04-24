@@ -202,14 +202,15 @@
                 </th>
                 <th
                   scope="row"
-                  class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                  class="px-6 py-4 align-middle font-medium text-gray-900 dark:text-white whitespace-nowrap"
                 >
                   {{ item.product.quantity }}
                 </th>
-                <th
-                  class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap flex-row flex"
-                >
-                  <template v-if="masterRequest.status == 'PENDING'">
+
+                <template v-if="masterRequest.status == 'PENDING'">
+                  <th
+                    class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap flex-row flex"
+                  >
                     <input
                       :disabled="loading"
                       v-model="detailRequest[index].quantity"
@@ -249,11 +250,17 @@
                         />
                       </svg>
                     </template>
-                  </template>
-                  <template v-else>
+                  </th>
+                </template>
+
+                <template v-else>
+                  <th
+                    class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                  >
                     {{ item.quantity }}
-                  </template>
-                </th>
+                  </th>
+                </template>
+
                 <th
                   scope="row"
                   class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
@@ -317,7 +324,7 @@ export default {
   computed: {
     error() {
       let total = 0
-      this.detailRequest.forEach((x) => {
+      this.detailRequest.forEach(x => {
         if (x.product.quantity < x.quantity) {
           total += 1
         }
@@ -371,7 +378,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .put(
@@ -387,7 +394,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 this.loading = !this.loading
                 if (res.status == 200) {
                   this.success()
@@ -410,7 +417,7 @@ export default {
           cancelButtonColor: '#3085d6',
           confirmButtonText: 'Tolak!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .put(
@@ -426,7 +433,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 this.loading = !this.loading
                 if (res.status == 200) {
                   this.$swal({
@@ -454,28 +461,43 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.masterRequest = res.data.data
           this.detailRequest = res.data.data.detail
         })
-        .catch((e) => {
+        .catch(e => {
           this.detailRequest = null
         })
     },
     print() {
-      console.info('aa')
-      this.$axios
-        .get(`/print/get?id=${this.masterRequest.id}`, {
-          headers: {
-            Authorization: `${this.token.token_type} ${this.token.access_token}`,
-          },
+      this.$axios({
+        url: `/print/get?id=${this.masterRequest.id}`,
+        method: 'GET',
+        responseType: 'arraybuffer',
+      }).then(response => {
+        let blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         })
-        .then((res) => {
-          link.href = `http://127.0.0.1:8000/${res.data}`
-          // this.$axios({
-          //   url: `${res.data}`,
-          // })
-        })
+        let link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = 'result.docx'
+        link.click()
+      })
+      // this.$axios
+      //   .get(`/print/get?id=${this.masterRequest.id}`, {
+      //     headers: {
+      //       Authorization: `${this.token.token_type} ${this.token.access_token}`,
+      //     },
+      //   })
+      //   .then(function (response) {
+      //     response.data.pipe()
+      //   })
+      // .then((res) => {
+      //   link.href = `http://127.0.0.1:8000/${res.data}`
+      //   // this.$axios({
+      //   //   url: `${res.data}`,
+      //   // })
+      // })
     },
   },
 }

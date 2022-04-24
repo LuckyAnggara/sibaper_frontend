@@ -202,7 +202,7 @@
                 </template>
                 <template v-else>
                   <tr style="height: 100px">
-                    <th colspan="4" class="text-center mt">
+                    <th colspan="5" class="text-center mt">
                       <div class="text-center">
                         <span class="text-2xl">Tidak data</span>
                       </div>

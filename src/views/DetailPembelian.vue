@@ -55,7 +55,12 @@
         </p>
         <template v-else>
           <button
-            @click="download(masterData.id)"
+            @click="
+              download(
+                masterData.id,
+                masterData.lampiran.replace('uploads/', '')
+              )
+            "
             class="font-medium mt-2 text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
           >
             <svg
@@ -206,19 +211,21 @@ export default {
     },
   },
   methods: {
-    download(id) {
-      this.$axios
-        .get(`/purchase/get-file?id=${id}`, {
-          headers: {
-            Authorization: `${this.token.token_type} ${this.token.access_token}`,
-          },
-        })
-        .then(res => {
-          this.$axios({
-            baseURL: 'http://127.0.0.1:8000/',
-            url: `${res.data}`,
-          })
-        })
+    download(id, filename) {
+      this.$axios({
+        url: `/purchase/get-file?id=${id}`,
+        method: 'GET',
+        responseType: 'arraybuffer',
+        headers: {
+          Authorization: `${this.token.token_type} ${this.token.access_token}`,
+        },
+      }).then(response => {
+        let blob = new Blob([response.data])
+        let link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = filename
+        link.click()
+      })
     },
     getData() {
       this.isLoading = !this.isLoading

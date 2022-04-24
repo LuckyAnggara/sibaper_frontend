@@ -3,7 +3,7 @@
     <div class="mb-8 text-right">
       <button
         v-if="dataRequest"
-        @click="printPageArea"
+        @click="print"
         type="button"
         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
@@ -55,7 +55,8 @@
             <div>
               <span class="text-2xl">Nomor Ticket #</span>
               {{ dataRequest.no_ticket }}<br />
-              <span>Tanggal</span> 12 Desember 2022<br />
+              <span>Tanggal</span>
+              {{ $moment(dataRequest.created_at).format('DD MMM YYYY') }}<br />
             </div>
           </div>
 
@@ -129,9 +130,6 @@ export default {
     },
   },
   methods: {
-    printPageArea() {
-      window.print()
-    },
     getDataTicket() {
       this.$axios
         .get(`/request/get?no_ticket=${this.noTicket}`)
@@ -145,6 +143,22 @@ export default {
           this.loading = !this.loading
           const error = e.toJSON()
         })
+    },
+    print() {
+      this.$axios({
+        url: `/print/get-bukti?id=${this.dataRequest.id}`,
+        method: 'GET',
+        responseType: 'arraybuffer',
+      })
+      // .then(response => {
+      //   let blob = new Blob([response.data], {
+      //     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      //   })
+      //   let link = document.createElement('a')
+      //   link.href = window.URL.createObjectURL(blob)
+      //   link.download = 'result.docx'
+      //   link.click()
+      // })
     },
   },
 }

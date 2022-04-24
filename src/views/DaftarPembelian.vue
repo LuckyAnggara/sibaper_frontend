@@ -133,7 +133,12 @@
                     <td class="px-6 py-4 text-center items-center">
                       <template v-if="item.lampiran">
                         <button
-                          @click="download(item.id)"
+                          @click="
+                            download(
+                              item.id,
+                              item.lampiran.replace('uploads/', '')
+                            )
+                          "
                           class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
                         >
                           <svg
@@ -178,6 +183,25 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        @click="hapusPembelian(item)"
+                        class="ml-2 font-medium text-red-600 dark:text-red-500 hover:underline hover:text-blue-500"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                           />
                         </svg>
                       </button>
@@ -298,13 +322,50 @@ export default {
     },
   },
   methods: {
-    download(id) {
+    hapusPembelian(item) {
+      this.$swal
+        .fire({
+          title: 'Hapus pembelian?',
+          text: `Melakukan penghapusan barang akan mengurangi mutasi persediaan!`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Proses!',
+        })
+        .then(result => {
+          if (result.isConfirmed) {
+            this.$axios
+              .delete(`/purchase/destroy/${item.id}`, {
+                headers: {
+                  Authorization: `${this.token.token_type} ${this.token.access_token}`,
+                },
+              })
+              .then(res => {
+                this.loading = !this.loading
+                if (res.status == 200) {
+                  this.success(item)
+                  this.getData()
+                }
+              })
+          } else {
+          }
+        })
+    },
+    download(id, filename) {
       this.$axios({
         url: `/purchase/get-file?id=${id}`,
         method: 'GET',
+        responseType: 'arraybuffer',
         headers: {
           Authorization: `${this.token.token_type} ${this.token.access_token}`,
         },
+      }).then(response => {
+        let blob = new Blob([response.data])
+        let link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = filename
+        link.click()
       })
     },
     view(x) {
@@ -321,11 +382,11 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.isLoading = !this.isLoading
           this.dataTable = res.data.data
         })
-        .catch((e) => {
+        .catch(e => {
           this.isLoading = !this.isLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -342,7 +403,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -355,7 +416,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -373,7 +434,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -391,7 +452,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
