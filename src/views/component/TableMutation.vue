@@ -26,7 +26,7 @@
     <div class="px-5 py-2">
       <div class="mb-5 relative flex flex-row items-center justify-between">
         <div class="sm:rounded-lg">
-          <label for="table-search" class="sr-only">Search</label>
+          <!-- <label for="table-search" class="sr-only">Search</label>
           <div class="relative mt-1">
             <div
               class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -50,7 +50,7 @@
               class="bg-gray-50 border shadow-md border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search "
             />
-          </div>
+          </div> -->
         </div>
 
         <div class="ml-5 relative sm:rounded-lg flex w-1/4 items-center">
@@ -121,7 +121,7 @@
                   <th
                     class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
                   >
-                    {{ masterData.from + index }}
+                    {{ index + 1 }}
                   </th>
                   <th
                     class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
@@ -165,21 +165,6 @@
       </div>
 
       <div class="mt-5 flex flex-col items-center">
-        <span class="text-sm text-gray-700 dark:text-gray-400">
-          Data
-          <span class="font-semibold text-gray-900 dark:text-white">{{
-            masterData.from
-          }}</span>
-          sampai
-          <span class="font-semibold text-gray-900 dark:text-white">{{
-            masterData.to
-          }}</span>
-          dari
-          <span class="font-semibold text-gray-900 dark:text-white">{{
-            masterData.total
-          }}</span>
-          Data
-        </span>
         <div class="inline-flex mt-2 xs:mt-0">
           <button
             :disabled="masterData.current_page == 1"
@@ -229,7 +214,7 @@
 export default {
   data() {
     return {
-      searchTerm: null,
+      // searchTerm: null,
       limitPage: [5, 10],
       limit: 5,
       error: false,
@@ -241,14 +226,15 @@ export default {
     },
     dataTable() {
       let saldo = 0
-      this.masterData.data.forEach(x => {
+      this.masterData.sort((a, b) => {
+        return b.id - a.id
+      })
+      this.masterData.forEach((x) => {
         saldo = saldo + x.debit - x.kredit
         x.saldo = saldo
       })
-      this.masterData.data.sort((a, b) => {
-        return b.id - a.id
-      })
-      return this.masterData.data
+
+      return this.masterData
     },
     masterData() {
       return this.$store.getters['app-mutation/getMutation']
@@ -266,33 +252,33 @@ export default {
       localStorage.setItem('limit', e)
       this.limitChange()
     },
-    searchTerm() {
-      this.searchChange()
-    },
+    // searchTerm() {
+    //   this.searchChange()
+    // },
   },
   props: {
     productId: Number,
   },
   methods: {
-    searchChange() {
-      this.$emit('searchTerm', this.searchTerm, this.limit)
-    },
+    // searchChange() {
+    //   this.$emit('searchTerm', this.searchTerm, this.limit)
+    // },
     limitChange() {
       this.$emit('limitChange', this.limit)
     },
     next() {
-      let params = ''
-      if (this.searchTerm !== null || '') {
-        params = `&search_term=${this.searchTerm}`
-      }
-      this.$emit('next', this.masterData.next_page_url, this.limit + params)
+      // let params = ''
+      // if (this.searchTerm !== null || '') {
+      //   params = `&search_term=${this.searchTerm}`
+      // }
+      // this.$emit('next', this.masterData.next_page_url, this.limit + params)
     },
     previous() {
-      let params = ''
-      if (this.searchTerm !== null || '') {
-        params = `&search_term=${this.searchTerm}`
-      }
-      this.$emit('previous', this.masterData.prev_page_url, this.limit + params)
+      // let params = ''
+      // if (this.searchTerm !== null || '') {
+      //   params = `&search_term=${this.searchTerm}`
+      // }
+      // this.$emit('previous', this.masterData.prev_page_url, this.limit + params)
     },
   },
 }

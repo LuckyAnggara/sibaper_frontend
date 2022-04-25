@@ -4,7 +4,7 @@
       class="p-10 border-[1px] -mt-10 border-slate-200 rounded-md flex flex-col items-center space-y-3"
     >
       <div class="py-8">
-        <img width="150" class="-mt-10" src="../assets/logo.png" />
+        <img width="350" class="-mt-10" src="../assets/logo.png" />
       </div>
       <input
         class="p-3 border-[1px] border-slate-500 rounded-sm w-80"
