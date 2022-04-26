@@ -30,7 +30,6 @@
         <p class="mb-2 font-normal text-gray-700 dark:text-gray-400 border-b-4">
           Catatan
         </p>
-
         <p
           class="mb-8 font-normal text-gray-700 dark:text-gray-400"
           style="white-space: pre"
@@ -205,6 +204,7 @@
                   class="px-6 py-4 align-middle font-medium text-gray-900 dark:text-white whitespace-nowrap"
                 >
                   {{ item.product.quantity }}
+                  {{ item.product.unit.name }}
                 </th>
 
                 <template v-if="masterRequest.status == 'PENDING'">
@@ -258,6 +258,7 @@
                     class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
                   >
                     {{ item.quantity }}
+                    {{ item.product.unit.name }}
                   </th>
                 </template>
 
@@ -324,7 +325,7 @@ export default {
   computed: {
     error() {
       let total = 0
-      this.detailRequest.forEach(x => {
+      this.detailRequest.forEach((x) => {
         if (x.product.quantity < x.quantity) {
           total += 1
         }
@@ -378,7 +379,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then(result => {
+        .then((result) => {
           if (result.isConfirmed) {
             this.$axios
               .put(
@@ -394,7 +395,7 @@ export default {
                   },
                 }
               )
-              .then(res => {
+              .then((res) => {
                 this.loading = !this.loading
                 if (res.status == 200) {
                   this.success()
@@ -417,7 +418,7 @@ export default {
           cancelButtonColor: '#3085d6',
           confirmButtonText: 'Tolak!',
         })
-        .then(result => {
+        .then((result) => {
           if (result.isConfirmed) {
             this.$axios
               .put(
@@ -433,7 +434,7 @@ export default {
                   },
                 }
               )
-              .then(res => {
+              .then((res) => {
                 this.loading = !this.loading
                 if (res.status == 200) {
                   this.$swal({
@@ -461,11 +462,11 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.masterRequest = res.data.data
           this.detailRequest = res.data.data.detail
         })
-        .catch(e => {
+        .catch((e) => {
           this.detailRequest = null
         })
     },
@@ -474,13 +475,13 @@ export default {
         url: `/print/get?id=${this.masterRequest.id}`,
         method: 'GET',
         responseType: 'arraybuffer',
-      }).then(response => {
+      }).then((response) => {
         let blob = new Blob([response.data], {
           type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         })
         let link = document.createElement('a')
         link.href = window.URL.createObjectURL(blob)
-        link.download = 'result.docx'
+        link.download = `result-${this.masterRequest.id}.docx`
         link.click()
       })
       // this.$axios

@@ -86,10 +86,12 @@
         >
           <tr>
             <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
-            <th scope="col" class="px-6 py-3" style="width: 60%">
+            <th scope="col" class="px-6 py-3" style="width: 40%">
               Nama Barang Persediaan
             </th>
+            <th scope="col" class="px-6 py-3" style="width: 10%">Jenis</th>
             <th scope="col" class="px-6 py-3" style="width: 20%">Jumlah</th>
+            <th scope="col" class="px-6 py-3" style="width: 10%">Satuan</th>
             <th scope="col" class="px-6 py-3" style="width: 5%">Action</th>
           </tr>
         </thead>
@@ -99,12 +101,22 @@
             :key="item.id"
             class="border-b dark:bg-gray-800 dark:border-gray-700 bg-gray-200"
           >
-            <td class="px-6 py-4">{{ index + 1 }}</td>
+            <td
+              class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+            >
+              {{ index + 1 }}
+            </td>
             <th
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
             >
               {{ item.name }}
+            </th>
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+            >
+              {{ item.type.name }}
             </th>
             <td class="px-6 py-4">
               <input
@@ -115,6 +127,12 @@
                 class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
             </td>
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+            >
+              {{ item.unit.name }}
+            </th>
             <td class="px-6 py-4 text-right">
               <button
                 :disabled="loading"
@@ -415,6 +433,8 @@ export default {
         this.detailPurchase.push({
           id: data.id,
           name: data.name,
+          type: data.type,
+          unit: data.unit,
           quantity: 1,
         })
       }

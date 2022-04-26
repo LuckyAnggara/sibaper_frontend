@@ -55,9 +55,10 @@
         >
           <tr>
             <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
-            <th scope="col" class="px-6 py-3" style="width: 40%">
-              Nama Barang Persediaan
+            <th scope="col" class="px-6 py-3" style="width: 30%">
+              Nama Persediaan
             </th>
+            <th scope="col" class="px-6 py-3" style="width: 10%">Jenis</th>
             <th scope="col" class="px-6 py-3" style="width: 20%">
               Saldo tersedia
             </th>
@@ -82,7 +83,13 @@
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
             >
-              {{ item.real_quantity }}
+              {{ item.type.name }}
+            </th>
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+            >
+              {{ item.real_quantity }} {{ item.unit.name }}
             </th>
             <td class="px-6 py-4 flex-row flex items-center">
               <input
@@ -334,6 +341,8 @@ export default {
         this.detailRequest.push({
           id: data.id,
           name: data.name,
+          type: data.type,
+          unit: data.unit,
           real_quantity: data.quantity,
           quantity: 1,
         })

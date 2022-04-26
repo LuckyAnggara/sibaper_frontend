@@ -120,9 +120,7 @@
                 <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
                 <th scope="col" class="px-6 py-3" style="width: 45%">Nama</th>
 
-                <th scope="col" class="px-6 py-3" style="width: 20%">
-                  Terakhir Keluar
-                </th>
+                <th scope="col" class="px-6 py-3" style="width: 20%">Jenis</th>
                 <th scope="col" class="px-6 py-3" style="width: 15%">
                   Saldo Akhir
                 </th>
@@ -178,16 +176,17 @@
                       {{ item.name }}
                       <span
                         v-if="index == 0 && baru == true"
-                        class="mr-2 bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900"
+                        class="bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900"
                         >New</span
                       >
                     </th>
 
                     <td class="px-6 py-4">
-                      {{ this.$moment(item.updated_at).format('DD-MMM-YYYY') }}
+                      {{ item.type.name }}
                     </td>
                     <td class="px-6 py-4">
                       {{ item.quantity == null ? 0 : item.quantity }}
+                      {{ item.unit.name }}
                     </td>
                     <td class="px-6 py-4">
                       <button
@@ -367,11 +366,11 @@ export default {
 
       this.$axios
         .get(`/product?limit=${this.limit}`)
-        .then(res => {
+        .then((res) => {
           this.isLoading = !this.isLoading
           this.dataTable = res.data.data
         })
-        .catch(e => {
+        .catch((e) => {
           this.isLoading = !this.isLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -384,14 +383,14 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`/product?limit=${this.limit}&name=${this.searchName}`)
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
     },
     limitChange() {
       this.tableLoading = !this.tableLoading
-      this.$axios.get(`/product?limit=${this.limit}`).then(res => {
+      this.$axios.get(`/product?limit=${this.limit}`).then((res) => {
         this.tableLoading = !this.tableLoading
         this.dataTable = res.data.data
       })
@@ -405,7 +404,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.next_page_url}&limit=${this.limit + params}`)
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -418,7 +417,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.prev_page_url}&limit=${this.limit + params}`)
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -431,7 +430,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
@@ -449,7 +448,7 @@ export default {
             },
           }
         )
-        .then(res => {
+        .then((res) => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
@@ -464,7 +463,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
@@ -479,7 +478,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
@@ -497,14 +496,43 @@ export default {
             },
           }
         )
-        .then(res => {
+        .then((res) => {
           this.$store.commit('app-mutation/SET_MUTATION', res.data)
           this.$store.commit('app-mutation/SET_LOADING', false)
+        })
+    },
+
+    getType() {
+      this.$axios
+        .get(`/product/type`, {
+          headers: {
+            Authorization: `${this.token.token_type} ${this.token.access_token}`,
+          },
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            this.$store.commit('app-product/SET_TYPE', res.data.data)
+          }
+        })
+    },
+    getUnit() {
+      this.$axios
+        .get(`/product/unit`, {
+          headers: {
+            Authorization: `${this.token.token_type} ${this.token.access_token}`,
+          },
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            this.$store.commit('app-product/SET_UNIT', res.data.data)
+          }
         })
     },
   },
   created() {
     this.getData()
+    this.getType()
+    this.getUnit()
   },
 }
 </script>

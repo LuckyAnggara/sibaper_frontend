@@ -45,6 +45,42 @@
           required
         />
       </div>
+
+      <div>
+        <label
+          for="desc"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Jenis</label
+        >
+        <select
+          required
+          v-model="type_id"
+          id="countries"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+          <option v-for="item in type" :key="item.id" :value="item.id">
+            {{ item.name }}
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label
+          for="desc"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Satuan</label
+        >
+        <select
+          required
+          v-model="unit_id"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+          <option v-for="item in unit" :key="item.id" :value="item.id">
+            {{ item.name }}
+          </option>
+        </select>
+      </div>
+
       <div>
         <label
           for="desc"
@@ -108,15 +144,24 @@ export default {
       name: null,
       desc: null,
       isLoading: false,
+      type_id: null,
+      unit_id: null,
       limit:
         localStorage.getItem('limit') === ('' || null)
           ? 5
           : localStorage.getItem('limit'),
     }
   },
+
   computed: {
     userData() {
       return this.$store.getters['app-user/getUserData']
+    },
+    type() {
+      return this.$store.getters['app-product/getType']
+    },
+    unit() {
+      return this.$store.getters['app-product/getUnit']
     },
     token() {
       return this.$store.getters['app-user/getToken']
@@ -132,6 +177,8 @@ export default {
           {
             name: this.name,
             desc: this.desc,
+            type: this.type_id,
+            unit: this.unit_id,
           },
           {
             headers: {
@@ -139,7 +186,7 @@ export default {
             },
           }
         )
-        .then(res => {
+        .then((res) => {
           if (res.status === 200) {
             this.name = null
             this.desc = null
@@ -149,7 +196,7 @@ export default {
             this.$vfm.hide('newItemModal')
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.isLoading = !this.isLoading
           this.$emit('isModalLoading', false)
           const error = e.toJSON()

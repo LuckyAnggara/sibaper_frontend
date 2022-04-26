@@ -74,12 +74,9 @@
             >
               <tr>
                 <th scope="col" class="px-6 py-3" style="width: 5%">No</th>
-                <th scope="col" class="px-6 py-3" style="width: 60%">Nama</th>
-                <th
-                  scope="col"
-                  class="px-6 py-3 flex-row flex items-center"
-                  style="width: 35%"
-                >
+                <th scope="col" class="px-6 py-3" style="width: 50%">Nama</th>
+                <th scope="col" class="px-6 py-3" style="width: 10%">Jenis</th>
+                <th scope="col" class="px-6 py-3 flex" style="width: 35%">
                   Saldo
                   <button @click="sortSaldo">
                     <svg
@@ -142,8 +139,17 @@
                     >
                       {{ item.name }}
                     </th>
-                    <td class="px-6 py-4 flex justify-center">
+                    <th
+                      scope="row"
+                      class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                    >
+                      {{ item.type.name }}
+                    </th>
+                    <td
+                      class="px-6 py-4 font-medium text-gray-900 flex justify-center"
+                    >
                       {{ item.quantity == null ? 0 : item.quantity }}
+                      {{ item.unit.name }}
                     </td>
                   </tr>
                 </template>

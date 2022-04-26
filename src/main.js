@@ -75,6 +75,7 @@ router.beforeResolve(async (to, _, next) => {
 import user from './store/user'
 import request from './store/request'
 import purchase from './store/purchase'
+import product from './store/product'
 import menu from './store/menu'
 import mutation from './store/mutation'
 const store = new Vuex.Store({
@@ -84,6 +85,7 @@ const store = new Vuex.Store({
     'app-purchase': purchase,
     'app-menu': menu,
     'app-mutation': mutation,
+    'app-product': product,
   },
 })
 
