@@ -27,35 +27,16 @@
       @submit.prevent="submit"
     >
       <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-        Tambah user baru
+        Ubah data
       </h3>
       <div>
         <label
           for="email"
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >NIP</label
+          >Nama item</label
         >
         <input
-          v-model="nip"
-          @blur="cekNip"
-          :disabled="isLoading"
-          type="number"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          placeholder=""
-          required
-        />
-        <p class="text-sm text-red-600 dark:text-red-500" v-if="ada">
-          <span class="font-medium">Oops!</span> NIP sudah terdaftar
-        </p>
-      </div>
-      <div>
-        <label
-          for="email"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Nama</label
-        >
-        <input
-          v-model="name"
+          v-model="product.name"
           :disabled="isLoading"
           type="text"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -63,22 +44,57 @@
           required
         />
       </div>
+
       <div>
         <label
-          for="email"
+          for="desc"
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Bagian</label
+          >Jenis</label
         >
         <select
           required
-          v-model="division_id"
+          v-model="product.type_id"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         >
-          <option v-for="item in division" :key="item.id" :value="item.id">
+          <option v-for="item in type" :key="item.id" :value="item.id">
             {{ item.name }}
           </option>
         </select>
       </div>
+
+      <div>
+        <label
+          for="desc"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Satuan</label
+        >
+        <select
+          required
+          v-model="product.unit_id"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+          <option v-for="item in unit" :key="item.id" :value="item.id">
+            {{ item.name }}
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label
+          for="desc"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Description</label
+        >
+        <textarea
+          :disabled="isLoading"
+          v-model="product.description"
+          type="text"
+          name="desc"
+          placeholder=""
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+        />
+      </div>
+
       <button
         v-if="isLoading"
         disabled
@@ -105,16 +121,11 @@
       </button>
       <button
         v-else
-        :disabled="ada"
         type="submit"
         class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         Submit
       </button>
-      <div class="text-xs font-medium text-gray-500 dark:text-gray-300">
-        Password menggunakan password standar
-        <b>123456</b>
-      </div>
     </form>
   </div>
 </template>
@@ -123,50 +134,39 @@
 export default {
   data() {
     return {
-      name: null,
-      nip: null,
-      division_id: null,
       isLoading: false,
-      ada: false,
     }
   },
   computed: {
     userData() {
       return this.$store.getters['app-user/getUserData']
     },
+    type() {
+      return this.$store.getters['app-product/getType']
+    },
+    unit() {
+      return this.$store.getters['app-product/getUnit']
+    },
     token() {
       return this.$store.getters['app-user/getToken']
     },
-    division() {
-      return this.$store.getters['app-user/getDivision']
+    product() {
+      return this.$store.getters['app-product/getProduct']
     },
   },
   methods: {
-    cekNip() {
-      this.$axios
-        .get(`/user/cek-nip?nip=${this.nip}`, {
-          headers: {
-            Authorization: `${this.token.token_type} ${this.token.access_token}`,
-          },
-        })
-        .then(res => {
-          if (res.data.message == true) {
-            this.ada = true
-          } else {
-            this.ada = false
-          }
-        })
-    },
     submit() {
       this.$emit('isModalLoading', true)
       this.isLoading = !this.isLoading
       this.$axios
-        .post(
-          `/user/register`,
+        .put(
+          `/product/update`,
           {
-            name: this.name,
-            nip: this.nip,
-            division_id: this.division_id,
+            id: this.product.id,
+            name: this.product.name,
+            desc: this.product.desc,
+            type_id: this.product.type_id,
+            unit_id: this.product.unit_id,
           },
           {
             headers: {
@@ -176,27 +176,20 @@ export default {
         )
         .then(res => {
           if (res.status === 200) {
-            this.name = null
-            this.nip = null
-            this.bagian = null
-            this.$emit('newUser')
             this.isLoading = !this.isLoading
             this.$emit('isModalLoading', false)
-            this.$vfm.hide('newUserModal')
+            this.$vfm.hide('ubahItemModal')
           }
         })
         .catch(e => {
           this.isLoading = !this.isLoading
           this.$emit('isModalLoading', false)
-          const error = e.toJSON()
+          this.$vfm.hide('ubahItemModal')
         })
     },
     batal() {
-      this.name = null
-      this.nip = null
-      this.division_id = null
-      this.ada = false
-      this.$vfm.hide('newUserModal')
+      this.$emit('refreshData')
+      this.$vfm.hide('ubahItemModal')
     },
   },
 }

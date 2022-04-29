@@ -10,17 +10,26 @@
       <Item-Modal @isModalLoading="modalLoading" @newItem="newItem" />
     </vue-final-modal>
     <vue-final-modal
+      v-model="showEditItemModal"
+      name="ubahItemModal"
+      classes="flex justify-center items-center"
+      content-class="relative p-4 w-full max-w-md  md:h-auto "
+      :prevent-click="isModalLoading"
+    >
+      <EditItemModal
+        @isModalLoading="modalLoading"
+        @newItem="newItem"
+        @refreshData="getData"
+      />
+    </vue-final-modal>
+    <vue-final-modal
+      :prevent-click="true"
       v-model="showMutationModal"
       name="mutationModal"
       classes="flex justify-center items-center"
       content-class="flex p-4  max-w-[60%] h-3/4  bg-white rounded-lg shadow dark:bg-gray-700 overflow-scroll"
     >
-      <TableMutation
-        @limitChange="mutationLimitChange"
-        @next="mutationNext"
-        @previous="mutationPrevious"
-        @searchTerm="mutationSearch"
-      />
+      <TableMutation />
     </vue-final-modal>
     <template v-if="!isLoading">
       <div class="text-center">
@@ -109,7 +118,7 @@
           </div>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <div class="relative overflow-x-visible shadow-md sm:rounded-lg">
           <table
             class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
           >
@@ -189,30 +198,55 @@
                       {{ item.unit.name }}
                     </td>
                     <td class="px-6 py-4">
-                      <button
-                        @click="openMutationModal(item.id)"
-                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          stroke-width="2"
+                      <Menu as="div" class="ml-3">
+                        <div>
+                          <MenuButton
+                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-500"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-6 w-6"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                              />
+                            </svg>
+                          </MenuButton>
+                        </div>
+                        <transition
+                          enter-active-class="transition ease-out duration-100"
+                          enter-from-class="transform opacity-0 scale-95"
+                          enter-to-class="transform opacity-100 scale-100"
+                          leave-active-class="transition ease-in duration-75"
+                          leave-from-class="transform opacity-100 scale-100"
+                          leave-to-class="transform opacity-0 scale-95"
                         >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      </button>
+                          <MenuItems
+                            class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                          >
+                            <MenuItem>
+                              <a
+                                @click="openMutationModal(item.id)"
+                                class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                                >Cek Mutasi</a
+                              >
+                            </MenuItem>
+                            <MenuItem>
+                              <a
+                                @click="ubahData(item.id)"
+                                class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                                >Ubah Data</a
+                              >
+                            </MenuItem>
+                          </MenuItems>
+                        </transition>
+                      </Menu>
                     </td>
                   </tr>
                 </template>
@@ -301,20 +335,27 @@
 <script>
 import ItemModal from './NewItemModal.vue'
 import TableMutation from './TableMutation.vue'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import EditItemModal from './EditItemModal.vue'
 
 export default {
   components: {
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
     ItemModal,
     TableMutation,
+    EditItemModal,
   },
   data() {
     return {
       productId: null,
       showNewItemModal: false,
+      showEditItemModal: false,
       showMutationModal: false,
       tableLoading: false,
       searchName: null,
-      dataTable: null,
       limitPage: [5, 10, 25, 100],
       limit:
         localStorage.getItem('limit') === ('' || null)
@@ -332,6 +373,9 @@ export default {
     },
     token() {
       return this.$store.getters['app-user/getToken']
+    },
+    dataTable() {
+      return this.$store.getters['app-product/getListProduct']
     },
   },
   watch: {
@@ -354,6 +398,15 @@ export default {
       this.getData()
       this.baru = true
     },
+    ubahData(x) {
+      const b = this.dataTable.data.find(y => {
+        if (y.id === x) {
+          this.$store.commit('app-product/SET_PRODUCT', y)
+          // this.$store.commit('app-product/SET_TEMP_PRODUCT', y)
+        }
+      })
+      this.$vfm.show('ubahItemModal')
+    },
     modalLoading() {
       this.isModalLoading = !this.isModalLoading
     },
@@ -363,14 +416,13 @@ export default {
     getData() {
       this.baru = false
       this.isLoading = !this.isLoading
-
       this.$axios
         .get(`/product?limit=${this.limit}`)
-        .then((res) => {
+        .then(res => {
           this.isLoading = !this.isLoading
-          this.dataTable = res.data.data
+          this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
         })
-        .catch((e) => {
+        .catch(e => {
           this.isLoading = !this.isLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -383,16 +435,18 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`/product?limit=${this.limit}&name=${this.searchName}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
-          this.dataTable = res.data.data
+
+          this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
         })
     },
     limitChange() {
       this.tableLoading = !this.tableLoading
-      this.$axios.get(`/product?limit=${this.limit}`).then((res) => {
+      this.$axios.get(`/product?limit=${this.limit}`).then(res => {
         this.tableLoading = !this.tableLoading
-        this.dataTable = res.data.data
+
+        this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
       })
     },
     next() {
@@ -404,9 +458,10 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.next_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
-          this.dataTable = res.data.data
+
+          this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
         })
     },
     previous() {
@@ -417,90 +472,91 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.prev_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
-          this.dataTable = res.data.data
+
+          this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
         })
     },
     // MUTASI
     getMutation(x) {
       this.$axios
-        .get(`/mutation/get?id=${x}&limit=5`, {
+        .get(`/mutation/get?id=${x}`, {
           headers: {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
           }
         })
     },
-    mutationLimitChange(limit) {
-      this.$store.commit('app-mutation/SET_LOADING', true)
-      this.$axios
-        .get(
-          `/mutation/get?id=${this.productId}&limit=${limit}&id=${this.productId}`,
-          {
-            headers: {
-              Authorization: `${this.token.token_type} ${this.token.access_token}`,
-            },
-          }
-        )
-        .then((res) => {
-          if (res.status == 200) {
-            this.$store.commit('app-mutation/SET_MUTATION', res.data)
-            this.$store.commit('app-mutation/SET_LOADING', false)
-          }
-        })
-    },
-    mutationNext(link, limit) {
-      this.$store.commit('app-mutation/SET_LOADING', true)
-      this.$axios
-        .get(`${link}&limit=${limit}&id=${this.productId}`, {
-          headers: {
-            Authorization: `${this.token.token_type} ${this.token.access_token}`,
-          },
-        })
-        .then((res) => {
-          if (res.status == 200) {
-            this.$store.commit('app-mutation/SET_MUTATION', res.data)
-            this.$store.commit('app-mutation/SET_LOADING', false)
-          }
-        })
-    },
-    mutationPrevious(link, limit) {
-      this.$store.commit('app-mutation/SET_LOADING', true)
-      this.$axios
-        .get(`${link}&limit=${limit}&id=${this.productId}`, {
-          headers: {
-            Authorization: `${this.token.token_type} ${this.token.access_token}`,
-          },
-        })
-        .then((res) => {
-          if (res.status == 200) {
-            this.$store.commit('app-mutation/SET_MUTATION', res.data)
-            this.$store.commit('app-mutation/SET_LOADING', false)
-          }
-        })
-    },
-    mutationSearch(searchTerm, limit) {
-      this.$store.commit('app-mutation/SET_LOADING', true)
-      this.$axios
-        .get(
-          `/mutation/get?search_term=${searchTerm}&limit=${limit}&id=${this.productId}`,
-          {
-            headers: {
-              Authorization: `${this.token.token_type} ${this.token.access_token}`,
-            },
-          }
-        )
-        .then((res) => {
-          this.$store.commit('app-mutation/SET_MUTATION', res.data)
-          this.$store.commit('app-mutation/SET_LOADING', false)
-        })
-    },
+    // mutationLimitChange(limit) {
+    //   this.$store.commit('app-mutation/SET_LOADING', true)
+    //   this.$axios
+    //     .get(
+    //       `/mutation/get?id=${this.productId}&limit=${limit}&id=${this.productId}`,
+    //       {
+    //         headers: {
+    //           Authorization: `${this.token.token_type} ${this.token.access_token}`,
+    //         },
+    //       }
+    //     )
+    //     .then(res => {
+    //       if (res.status == 200) {
+    //         this.$store.commit('app-mutation/SET_MUTATION', res.data)
+    //         this.$store.commit('app-mutation/SET_LOADING', false)
+    //       }
+    //     })
+    // },
+    // mutationNext(link, limit) {
+    //   this.$store.commit('app-mutation/SET_LOADING', true)
+    //   this.$axios
+    //     .get(`${link}&limit=${limit}&id=${this.productId}`, {
+    //       headers: {
+    //         Authorization: `${this.token.token_type} ${this.token.access_token}`,
+    //       },
+    //     })
+    //     .then(res => {
+    //       if (res.status == 200) {
+    //         this.$store.commit('app-mutation/SET_MUTATION', res.data)
+    //         this.$store.commit('app-mutation/SET_LOADING', false)
+    //       }
+    //     })
+    // },
+    // mutationPrevious(link, limit) {
+    //   this.$store.commit('app-mutation/SET_LOADING', true)
+    //   this.$axios
+    //     .get(`${link}&limit=${limit}&id=${this.productId}`, {
+    //       headers: {
+    //         Authorization: `${this.token.token_type} ${this.token.access_token}`,
+    //       },
+    //     })
+    //     .then(res => {
+    //       if (res.status == 200) {
+    //         this.$store.commit('app-mutation/SET_MUTATION', res.data)
+    //         this.$store.commit('app-mutation/SET_LOADING', false)
+    //       }
+    //     })
+    // },
+    // mutationSearch(searchTerm, limit) {
+    //   this.$store.commit('app-mutation/SET_LOADING', true)
+    //   this.$axios
+    //     .get(
+    //       `/mutation/get?search_term=${searchTerm}&limit=${limit}&id=${this.productId}`,
+    //       {
+    //         headers: {
+    //           Authorization: `${this.token.token_type} ${this.token.access_token}`,
+    //         },
+    //       }
+    //     )
+    //     .then(res => {
+    //       this.$store.commit('app-mutation/SET_MUTATION', res.data)
+    //       this.$store.commit('app-mutation/SET_LOADING', false)
+    //     })
+    // },
 
     getType() {
       this.$axios
@@ -509,7 +565,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-product/SET_TYPE', res.data.data)
           }
@@ -522,7 +578,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-product/SET_UNIT', res.data.data)
           }

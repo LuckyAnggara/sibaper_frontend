@@ -66,7 +66,7 @@
               ><br />
               NIP : <b>{{ dataRequest.user.nip }}</b
               ><br />
-              Bagian : <b>{{ dataRequest.user.bagian }}</b>
+              Bagian : <b>{{ dataRequest.user.division.name }}</b>
             </div>
           </div>
 
@@ -75,7 +75,7 @@
             <span class="font-medium"> Daftar Permintaan Persediaan </span>
             <div
               v-for="item in dataRequest.detail.filter(
-                (x) => x.status != 'REJECT'
+                x => x.status != 'REJECT'
               )"
               :key="item.id"
               class="mt-5 flex justify-between mb-4 bg-gray-200 px-3 py-2"
@@ -136,13 +136,13 @@ export default {
     getDataTicket() {
       this.$axios
         .get(`/request/get?no_ticket=${this.noTicket}`)
-        .then((res) => {
+        .then(res => {
           this.loading = !this.loading
           if (res.status == 200) {
             this.$store.commit('app-request/SET_REQUEST_RESULT', res.data.data)
           }
         })
-        .catch((e) => {
+        .catch(e => {
           this.loading = !this.loading
           const error = e.toJSON()
         })

@@ -163,7 +163,7 @@
                       {{ item.name }}
                     </td>
                     <td class="px-6 py-4">
-                      {{ item.bagian }}
+                      {{ item.division.name }}
                     </td>
                     <td class="px-6 py-4">
                       <template v-if="item.status == 'ACTIVE'">
@@ -547,9 +547,18 @@ export default {
           this.dataTable = res.data.data
         })
     },
+
+    getDivision() {
+      this.$axios.get(`/user/division`).then(res => {
+        if (res.status == 200) {
+          this.$store.commit('app-user/SET_DIVISION', res.data.data)
+        }
+      })
+    },
   },
   created() {
     this.getData()
+    this.getDivision()
   },
 }
 </script>

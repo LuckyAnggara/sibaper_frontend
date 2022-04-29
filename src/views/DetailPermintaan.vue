@@ -1,157 +1,188 @@
 <template>
   <form autocomplete="off" @submit.prevent="submit">
     <div class="flex flex-row w-full justify-between overflow-auto">
-      <div
-        class="p-6 w-2/5 bg-gray-200 rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
-      >
-        <template v-if="masterRequest.status == 'PENDING'">
-          <span
-            class="bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900"
-            >{{ masterRequest.status }}</span
-          >
-        </template>
-        <template v-else-if="masterRequest.status == 'ACCEPT'">
-          <span
-            class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900"
-            >{{ masterRequest.status }}</span
-          >
-        </template>
-        <template v-else-if="masterRequest.status == 'REJECT'">
-          <span
-            class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900"
-            >{{ masterRequest.status }}</span
-          >
-        </template>
-        <h3
-          class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+      <div class="flex flex-col w-2/5">
+        <div
+          class="p-6 w-full bg-gray-200 rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
         >
-          Nomor Ticket #{{ masterRequest.no_ticket }}
-        </h3>
-        <p class="mb-2 font-normal text-gray-700 dark:text-gray-400 border-b-4">
-          Catatan
-        </p>
-        <p
-          class="mb-8 font-normal text-gray-700 dark:text-gray-400"
-          style="white-space: pre"
-        >
-          {{
-            masterRequest.notes == null
-              ? 'Tidak ada catatan'
-              : masterRequest.notes
-          }}
-        </p>
-        <template v-if="masterRequest.status == 'PENDING'">
-          <div class="flex flex-col justify-center items-start">
-            <button
-              type="submit"
-              class="mb-5 text-white shadow-md bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          <template v-if="masterRequest.status == 'PENDING'">
+            <span
+              class="bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900"
+              >{{ masterRequest.status }}</span
             >
-              <template v-if="!loading">
-                Submit
-                <svg
-                  class="w-5 h-5 ml-2 -mr-1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-                  />
-                </svg>
-              </template>
-              <template v-else>
-                <svg
-                  role="status"
-                  class="inline mr-3 w-4 h-4 text-white animate-spin"
-                  viewBox="0 0 100 101"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                    fill="#E5E7EB"
-                  />
-                  <path
-                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                    fill="currentColor"
-                  />
-                </svg>
-                Processing...
-              </template>
-            </button>
-            <button
-              type="button"
-              @click="reject"
-              class="text-white shadow-md bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+          </template>
+          <template v-else-if="masterRequest.status == 'ACCEPT'">
+            <span
+              class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900"
+              >{{ masterRequest.status }}</span
             >
-              <template v-if="!loading">
-                Reject
+          </template>
+          <template v-else-if="masterRequest.status == 'REJECT'">
+            <span
+              class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900"
+              >{{ masterRequest.status }}</span
+            >
+          </template>
+          <h3
+            class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+          >
+            Nomor Ticket #{{ masterRequest.no_ticket }}
+          </h3>
+          <p
+            class="mb-2 font-normal text-gray-700 dark:text-gray-400 border-b-4"
+          >
+            Catatan
+          </p>
+          <p
+            class="mb-8 font-normal text-gray-700 dark:text-gray-400"
+            style="white-space: pre"
+          >
+            {{
+              masterRequest.notes == null
+                ? 'Tidak ada catatan'
+                : masterRequest.notes
+            }}
+          </p>
+          <template v-if="masterRequest.status == 'PENDING'">
+            <div class="flex flex-col justify-center items-start">
+              <button
+                type="submit"
+                class="mb-5 text-white shadow-md bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                <template v-if="!loading">
+                  Submit
+                  <svg
+                    class="w-5 h-5 ml-2 -mr-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                    />
+                  </svg>
+                </template>
+                <template v-else>
+                  <svg
+                    role="status"
+                    class="inline mr-3 w-4 h-4 text-white animate-spin"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="#E5E7EB"
+                    />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  Processing...
+                </template>
+              </button>
+              <button
+                type="button"
+                @click="reject"
+                class="text-white shadow-md bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+              >
+                <template v-if="!loading">
+                  Reject
 
-                <svg
-                  class="w-5 h-5 ml-2 -mr-1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"
-                  />
-                </svg>
-              </template>
-              <template v-else>
-                <svg
-                  role="status"
-                  class="inline mr-3 w-4 h-4 text-white animate-spin"
-                  viewBox="0 0 100 101"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                    fill="#E5E7EB"
-                  />
-                  <path
-                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                    fill="currentColor"
-                  />
-                </svg>
-                Processing...
-              </template>
-            </button>
-          </div>
-        </template>
-        <template v-else-if="masterRequest.status == 'ACCEPT'">
-          <button
-            @click="print"
-            type="button"
-            class="text-white shadow-md bg-green-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            <svg
-              class="w-5 h-5 -ml-2 mr-1"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
+                  <svg
+                    class="w-5 h-5 ml-2 -mr-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"
+                    />
+                  </svg>
+                </template>
+                <template v-else>
+                  <svg
+                    role="status"
+                    class="inline mr-3 w-4 h-4 text-white animate-spin"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="#E5E7EB"
+                    />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  Processing...
+                </template>
+              </button>
+            </div>
+          </template>
+          <template v-else-if="masterRequest.status == 'ACCEPT'">
+            <button
+              @click="print"
+              type="button"
+              class="text-white shadow-md bg-green-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-              />
-            </svg>
-            Print
-          </button>
-        </template>
+              <svg
+                class="w-5 h-5 -ml-2 mr-1"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                />
+              </svg>
+              Print
+            </button>
+          </template>
+        </div>
+        <div
+          class="mt-5 p-6 w-full bg-gray-200 rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
+        >
+          <ol
+            class="relative border-l border-gray-800 dark:border-gray-700"
+            v-if="timeLog"
+          >
+            <li v-for="item in timeLog" :key="item.id" class="mb-10 ml-4">
+              <div
+                class="absolute w-3 h-3 bg-black rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"
+              ></div>
+              <time
+                class="mb-1 text-sm font-normal leading-none text-gray-800 dark:text-gray-500"
+                >{{ $moment(item.created_at).fromNow() }}</time
+              >
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                {{ item.keterangan }}
+              </h3>
+              <p
+                class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"
+              >
+                created by - <b>{{ item.user.name }}</b>
+              </p>
+            </li>
+          </ol>
+        </div>
       </div>
+
       <div class="w-3/4 flex-col ml-10">
         <div class="flex overflow-auto shadow-lg rounded-lg">
           <table
@@ -318,6 +349,7 @@ export default {
       detailRequest: [],
       masterRequest: {
         id: null,
+        time_log: null,
       },
       loading: false,
     }
@@ -325,7 +357,7 @@ export default {
   computed: {
     error() {
       let total = 0
-      this.detailRequest.forEach((x) => {
+      this.detailRequest.forEach(x => {
         if (x.product.quantity < x.quantity) {
           total += 1
         }
@@ -340,6 +372,9 @@ export default {
     },
     token() {
       return this.$store.getters['app-user/getToken']
+    },
+    timeLog() {
+      return this.masterRequest.time_log
     },
   },
   watch: {
@@ -379,7 +414,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .put(
@@ -395,7 +430,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 this.loading = !this.loading
                 if (res.status == 200) {
                   this.success()
@@ -418,7 +453,7 @@ export default {
           cancelButtonColor: '#3085d6',
           confirmButtonText: 'Tolak!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .put(
@@ -434,7 +469,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 this.loading = !this.loading
                 if (res.status == 200) {
                   this.$swal({
@@ -462,11 +497,11 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           this.masterRequest = res.data.data
           this.detailRequest = res.data.data.detail
         })
-        .catch((e) => {
+        .catch(e => {
           this.detailRequest = null
         })
     },
@@ -475,7 +510,7 @@ export default {
         url: `/print/get?id=${this.masterRequest.id}`,
         method: 'GET',
         responseType: 'arraybuffer',
-      }).then((response) => {
+      }).then(response => {
         let blob = new Blob([response.data], {
           type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         })

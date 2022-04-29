@@ -353,7 +353,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           console.info(res)
           this.loading = !this.loading
           if (res.status == 200) {
@@ -363,7 +363,7 @@ export default {
                 icon: 'error',
                 title: res.data.lampiran[0],
               })
-              .then((x) => {
+              .then(x => {
                 this.success()
                 this.$router.push({
                   name: 'detail-pembelian',
@@ -384,7 +384,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -401,7 +401,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 if (res.status == 200) {
                   this.$store.commit(
                     'app-purchase/SET_PURCHASE_RESULT',
@@ -411,11 +411,13 @@ export default {
                     this.uploadingLampiran(res.data.data)
                   }
                   this.loading = !this.loading
-                  this.$router.push({
-                    name: 'detail-pembelian',
-                    params: { id: res.data.data.id },
-                  })
-                  this.success()
+                  setTimeout(() => {
+                    this.$router.push({
+                      name: 'detail-pembelian',
+                      params: { id: res.data.data.id },
+                    })
+                    this.success()
+                  }, 1000)
                 }
               })
           }
@@ -425,9 +427,9 @@ export default {
       this.detailPurchase.splice(index, 1)
     },
     pilihItem(data) {
-      const b = this.detailPurchase.find((d) => d.id === data.id)
+      const b = this.detailPurchase.find(d => d.id === data.id)
       if (b) {
-        const index = this.detailPurchase.findIndex((d) => d.id === data.id)
+        const index = this.detailPurchase.findIndex(d => d.id === data.id)
         this.detailPurchase[index].quantity += 1
       } else {
         this.detailPurchase.push({
@@ -447,10 +449,10 @@ export default {
       } else {
         this.$axios
           .get(`/product?name=${string}`)
-          .then((res) => {
+          .then(res => {
             this.dataProduct = res.data.data.data
           })
-          .catch((e) => {
+          .catch(e => {
             this.dataProduct = null
           })
       }

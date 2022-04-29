@@ -1,13 +1,21 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
   <div class="hidden-print min-h-full flex flex-col h-screen justify-between">
-    <Disclosure as="nav" class="bg-white" v-slot="{ open }">
+    <Disclosure as="nav" class="bg-white dark:bg-black" v-slot="{ open }">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <img class="h-8" src="../../assets/logo.png" alt="Workflow" />
-            </div>
+            <a href="https://www.rutanjakpus.id/" class="flex items-center">
+              <img
+                src="../../assets/logo_fix.png"
+                class="mr-3 h-6 sm:h-9"
+                alt="Flowbite Logo"
+              />
+              <span
+                class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
+                >SIPANSER</span
+              >
+            </a>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
                 <a
@@ -238,7 +246,11 @@
         class="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0"
       >
         <li>
-          <a href="#" class="mr-4 hover:underline md:mr-6">About</a>
+          <a
+            href="https://www.rutanjakpus.id/"
+            class="mr-4 hover:underline md:mr-6"
+            >About</a
+          >
         </li>
       </ul>
     </footer>

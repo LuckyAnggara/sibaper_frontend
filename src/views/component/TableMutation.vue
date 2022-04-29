@@ -5,7 +5,7 @@
         Tabel mutasi persediaan
       </h3>
       <button
-        @click="$vfm.hide('mutationModal')"
+        @click="closeModal"
         type="button"
         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
       >
@@ -51,18 +51,6 @@
               placeholder="Search "
             />
           </div> -->
-        </div>
-
-        <div class="ml-5 relative sm:rounded-lg flex w-1/4 items-center">
-          <label class="flex flex-row mr-2 ml-5">Show</label>
-          <select
-            v-model="limit"
-            class="shadow-md flex mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          >
-            <option v-for="item in limitPage" :key="item.id">
-              {{ item }}
-            </option>
-          </select>
         </div>
       </div>
 
@@ -121,7 +109,7 @@
                   <th
                     class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
                   >
-                    {{ index + 1 }}
+                    {{ parseInt(from) + parseInt(index) }}
                   </th>
                   <th
                     class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
@@ -165,10 +153,26 @@
       </div>
 
       <div class="mt-5 flex flex-col items-center">
+        <!-- Help text -->
+        <span class="text-sm text-gray-700 dark:text-gray-400">
+          Data
+          <span class="font-semibold text-gray-900 dark:text-white">{{
+            from
+          }}</span>
+          sampai
+          <span class="font-semibold text-gray-900 dark:text-white">{{
+            b
+          }}</span>
+          dari
+          <span class="font-semibold text-gray-900 dark:text-white">{{
+            total_data
+          }}</span>
+          Data
+        </span>
         <div class="inline-flex mt-2 xs:mt-0">
           <button
-            :disabled="masterData.current_page == 1"
-            @click="previous"
+            :disabled="current_page == 1"
+            @click="prevPage"
             class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-gray-800 disabled:bg-gray-600 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             <svg
@@ -186,8 +190,8 @@
             Prev
           </button>
           <button
-            :disabled="masterData.current_page == masterData.last_page"
-            @click="next"
+            :disabled="current_page == last_page"
+            @click="nextPage"
             class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-gray-800 disabled:bg-gray-600 rounded-r border-0 border-l border-gray-700 hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             Next
@@ -214,30 +218,25 @@
 export default {
   data() {
     return {
-      // searchTerm: null,
-      limitPage: [5, 10],
-      limit: 5,
       error: false,
+      current_page: 1,
+      from: 1,
+      a: 0,
+      b: 10,
     }
   },
   computed: {
+    last_page() {
+      return Math.ceil(this.total_data / 10)
+    },
+    total_data() {
+      return this.$store.getters['app-mutation/getTotalData']
+    },
     isLoading() {
       return this.$store.getters['app-mutation/getLoading']
     },
     dataTable() {
-      let saldo = 0
-      this.masterData.sort((a, b) => {
-        return b.id - a.id
-      })
-      this.masterData.forEach((x) => {
-        saldo = saldo + x.debit - x.kredit
-        x.saldo = saldo
-      })
-
-      return this.masterData
-    },
-    masterData() {
-      return this.$store.getters['app-mutation/getMutation']
+      return this.$store.getters['app-mutation/getMutation'](this.a, this.b)
     },
     tableLoading() {
       if (this.dataTable.length > 0) {
@@ -247,39 +246,40 @@ export default {
       }
     },
   },
-  watch: {
-    limit(e) {
-      localStorage.setItem('limit', e)
-      this.limitChange()
+  created() {},
+  methods: {
+    closeModal() {
+      this.from = 1
+      this.current_page = 1
+      this.a = 0
+      this.b = 10
+      this.$vfm.hide('mutationModal')
     },
-    // searchTerm() {
-    //   this.searchChange()
-    // },
+    nextPage() {
+      this.from = this.from + this.b
+
+      const sampai_ke = this.b + 10
+      if (sampai_ke > this.total_data) {
+        this.b = this.total_data
+      } else {
+        this.b = this.b + 10
+      }
+      this.a = this.a + 10
+      this.current_page++
+    },
+    prevPage() {
+      this.from = this.from - 10
+      this.a = this.a - 10
+      if (this.b == this.total_data) {
+        this.b = this.b - (this.total_data - 10)
+      } else {
+        this.b = this.b - 10
+      }
+      this.current_page--
+    },
   },
   props: {
     productId: Number,
-  },
-  methods: {
-    // searchChange() {
-    //   this.$emit('searchTerm', this.searchTerm, this.limit)
-    // },
-    limitChange() {
-      this.$emit('limitChange', this.limit)
-    },
-    next() {
-      // let params = ''
-      // if (this.searchTerm !== null || '') {
-      //   params = `&search_term=${this.searchTerm}`
-      // }
-      // this.$emit('next', this.masterData.next_page_url, this.limit + params)
-    },
-    previous() {
-      // let params = ''
-      // if (this.searchTerm !== null || '') {
-      //   params = `&search_term=${this.searchTerm}`
-      // }
-      // this.$emit('previous', this.masterData.prev_page_url, this.limit + params)
-    },
   },
 }
 </script>
