@@ -5,7 +5,7 @@ import './index.css'
 import Vuex from 'vuex'
 import VueSweetalert2 from 'vue-sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
-
+import 'flowbite'
 import moment from 'moment'
 import vfmPlugin from 'vue-final-modal'
 import VueToast from 'vue-toast-notification'
@@ -22,8 +22,8 @@ import axios from 'axios'
 const axiosIns = axios.create({
   // You can add your headers here
   // ================================
-  // baseURL: 'http://127.0.0.1:8000/api',
-  baseURL: 'https://siapbaper.bbmakmur.com/api',
+  baseURL: 'http://127.0.0.1:8000/api',
+  // baseURL: 'https://siapbaper.bbmakmur.com/api',
 
   // baseURL: 'http://192.168.1.24:8000/api',
 

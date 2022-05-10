@@ -8,6 +8,7 @@ import DetailPembelian from './views/DetailPembelian.vue'
 import DetailPermintaan from './views/DetailPermintaan.vue'
 import UserManagement from './views/UserManagement.vue'
 import Login from './views/Login.vue'
+import Laporan from './views/Laporan.vue'
 import Profile from './views/ProfilePage.vue'
 import Persediaan from './views/Persediaan.vue'
 import NotFound from './views/NotFound.vue'
@@ -127,6 +128,15 @@ export const routes = [
     },
   },
   {
+    path: '/laporan',
+    name: 'laporan',
+    component: Laporan,
+    meta: {
+      title: 'Laporan',
+      layout: 'layout-normal',
+    },
+  },
+  {
     path: '/profile-page',
     name: 'profile',
     component: Profile,
@@ -166,6 +176,7 @@ const admin = [
   { name: 'Persediaan', href: 'persediaan' },
   { name: 'Pembelian', href: 'pembelian' },
   { name: 'Daftar Permintaan', href: 'daftar-permintaan' },
+  { name: 'Laporan', href: 'laporan' },
   { name: 'User Management', href: 'user-management' },
 ]
 

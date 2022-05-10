@@ -6,6 +6,7 @@
       <div class="py-8">
         <img width="350" class="-mt-10" src="../assets/logo.png" />
       </div>
+
       <input
         class="p-3 border-[1px] border-slate-500 rounded-sm w-80"
         placeholder="Nomor Induk Pegawai"
@@ -60,6 +61,15 @@
             >Hubungi Admin untuk membuat Akun baru</a
           >
         </div>
+
+        <!-- <div>
+          <small>
+            Logo made by
+            <a href="https://www.designevo.com/" title="Free Online Logo Maker"
+              >DesignEvo free logo creator</a
+            >
+          </small>
+        </div> -->
       </div>
     </div>
   </div>
