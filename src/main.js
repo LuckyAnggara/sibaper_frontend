@@ -19,11 +19,14 @@ import { routes, getNavigation } from './routes.js'
 import axios from 'axios'
 // moment
 
+import { baseUrl } from './axios'
+
 const axiosIns = axios.create({
   // You can add your headers here
   // ================================
+  baseURL: baseUrl,
   // baseURL: 'http://127.0.0.1:8000/api',
-  baseURL: 'https://siapbaper.bbmakmur.com/api',
+  // baseURL: 'https://siapbaper.bbmakmur.com/api',
 
   // baseURL: 'http://192.168.1.24:8000/api',
 

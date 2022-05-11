@@ -75,7 +75,7 @@
             <span class="font-medium"> Daftar Permintaan Persediaan </span>
             <div
               v-for="item in dataRequest.detail.filter(
-                x => x.status != 'REJECT'
+                (x) => x.status != 'REJECT'
               )"
               :key="item.id"
               class="mt-5 flex justify-between mb-4 bg-gray-200 px-3 py-2"
@@ -107,6 +107,8 @@
 </template>
 
 <script>
+import { baseUrl } from '../../axios'
+
 export default {
   data() {
     return {
@@ -136,31 +138,33 @@ export default {
     getDataTicket() {
       this.$axios
         .get(`/request/get?no_ticket=${this.noTicket}`)
-        .then(res => {
+        .then((res) => {
           this.loading = !this.loading
           if (res.status == 200) {
             this.$store.commit('app-request/SET_REQUEST_RESULT', res.data.data)
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.loading = !this.loading
           const error = e.toJSON()
         })
     },
     print() {
-      this.$axios({
-        url: `/print/get-bukti?id=${this.dataRequest.id}`,
-        method: 'GET',
-        responseType: 'arraybuffer',
-      })
-      // .then(response => {
-      //   let blob = new Blob([response.data], {
-      //     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      //   })
-      //   let link = document.createElement('a')
-      //   link.href = window.URL.createObjectURL(blob)
-      //   link.download = 'result.docx'
-      //   link.click()
+      window.open(`${baseUrl}/print/get-bukti?id=${this.dataRequest.id}`)
+      // this.$axios({
+      //   url: `/print/get-bukti?id=${this.dataRequest.id}`,
+      //   method: 'GET',
+      //   // responseType: 'blob',
+      //   responseType: 'arraybuffer',
+      // })
+      // .then((res) => {
+      //   var FILE = window.URL.createObjectURL(new Blob([res.data]))
+
+      //   var docUrl = document.createElement('x')
+      //   docUrl.href = FILE
+      //   docUrl.setAttribute('download', 'file.pdf')
+      //   document.body.appendChild(docUrl)
+      //   docUrl.click()
       // })
     },
   },

@@ -1,18 +1,2 @@
-import Vue from 'vue'
-
-// axios
-import axios from 'axios'
-
-function axiosIns() {
-  return axios.create({
-    // You can add your headers here
-    // ================================
-    baseURL: 'http://127.0.0.1:5000/api/',
-    // timeout: 1000,
-    // headers: {'X-Custom-Header': 'foobar'}
-  })
-}
-
-Vue.prototype.$http = axiosIns
-
-export default axiosIns
+// export const baseUrl = 'http://127.0.0.1:8000/api'
+export const baseUrl = 'https://siapbaper.bbmakmur.com/api'
