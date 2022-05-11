@@ -39,7 +39,7 @@
           v-model="nip"
           @blur="cekNip"
           :disabled="isLoading"
-          type="number"
+          type="text"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
           placeholder=""
           required
@@ -149,7 +149,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           if (res.data.message == true) {
             this.ada = true
           } else {
@@ -174,7 +174,7 @@ export default {
             },
           }
         )
-        .then(res => {
+        .then((res) => {
           if (res.status === 200) {
             this.name = null
             this.nip = null
@@ -185,7 +185,7 @@ export default {
             this.$vfm.hide('newUserModal')
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.isLoading = !this.isLoading
           this.$emit('isModalLoading', false)
           const error = e.toJSON()

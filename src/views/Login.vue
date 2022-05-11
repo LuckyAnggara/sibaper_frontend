@@ -130,6 +130,16 @@ export default {
       })
       this.reset()
     },
+    belumterDaftar() {
+      this.$toast.open({
+        message: 'User belum terdaftar',
+        type: 'error',
+        duration: 2000,
+        position: 'top',
+        dismissible: true,
+      })
+      this.reset()
+    },
     login() {
       const data = {
         nip: this.nip,
@@ -169,6 +179,8 @@ export default {
             this.errorNipPwEmpty()
           } else if (error.status == '403') {
             this.deactive()
+          } else if (error.status == '404') {
+            this.belumterDaftar()
           }
           this.loginLoading = !this.loginLoading
         })

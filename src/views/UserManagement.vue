@@ -232,6 +232,14 @@
                                 }}</a
                               >
                             </MenuItem>
+                            <MenuItem>
+                              <a
+                                @click="destroy(item.id)"
+                                href="#"
+                                class="hover:bg-gray-100 block px-4 py-2 text-sm text-gray-700"
+                                >Delete</a
+                              >
+                            </MenuItem>
                           </MenuItems>
                         </transition>
                       </Menu>
@@ -389,6 +397,36 @@ export default {
         toast: true,
       })
     },
+    destroy(id) {
+      this.$swal
+        .fire({
+          title: 'Delete?',
+          text: 'User akan di hapus ?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Proses!',
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$axios
+              .delete(`/user/destroy/${id}`, {
+                headers: {
+                  Authorization: `${this.token.token_type} ${this.token.access_token}`,
+                },
+              })
+              .then((res) => {
+                if (res.status == 200) {
+                  if (res.data != 'data tidak ada') {
+                    this.success('User berhasil di Hapus')
+                    this.getData()
+                  }
+                }
+              })
+          }
+        })
+    },
     reset_password(id) {
       this.$swal
         .fire({
@@ -400,7 +438,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then(result => {
+        .then((result) => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -414,9 +452,10 @@ export default {
                   },
                 }
               )
-              .then(res => {
+              .then((res) => {
                 if (res.status == 200) {
                   this.success('Reset password berhasil')
+                  this.getData()
                 }
               })
           }
@@ -435,7 +474,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then(result => {
+        .then((result) => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -450,7 +489,7 @@ export default {
                   },
                 }
               )
-              .then(res => {
+              .then((res) => {
                 if (res.status == 200) {
                   this.success('Status user berhasil di ubah')
                   this.getData()
@@ -468,11 +507,11 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
-        .catch(e => {
+        .catch((e) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -493,7 +532,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -506,7 +545,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -524,7 +563,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
@@ -542,14 +581,14 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then(res => {
+        .then((res) => {
           this.tableLoading = !this.tableLoading
           this.dataTable = res.data.data
         })
     },
 
     getDivision() {
-      this.$axios.get(`/user/division`).then(res => {
+      this.$axios.get(`/user/division`).then((res) => {
         if (res.status == 200) {
           this.$store.commit('app-user/SET_DIVISION', res.data.data)
         }
