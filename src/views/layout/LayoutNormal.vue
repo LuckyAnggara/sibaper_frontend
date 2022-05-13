@@ -6,15 +6,11 @@
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center">
             <a href="https://www.rutanjakpus.id/" class="flex items-center">
-              <img
-                src="../../assets/logo_fix.png"
-                class="mr-3 h-6 sm:h-9"
-                alt=""
-              />
-              <span
+              <img src="../../assets/logo.png" class="mr-3 h-6 sm:h-9" alt="" />
+              <!-- <span
                 class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
                 >SIAP BAPER</span
-              >
+              > -->
             </a>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
