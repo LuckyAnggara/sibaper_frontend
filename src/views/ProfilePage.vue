@@ -139,12 +139,25 @@
                 class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 >Nama Bagian</label
               >
-              <input
-                :disabled="loadingChange"
+              <select
+                required
+                v-model="userData.division_id"
+                class="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option
+                  v-for="item in division"
+                  :key="item.id"
+                  :value="item.id"
+                >
+                  {{ item.name }}
+                </option>
+              </select>
+              <!-- <input
+                :disabled="true"
                 class="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 type="text"
-                v-model="userData.bagian"
-              />
+                v-model="userData.division.name"
+              /> -->
             </div>
           </div>
         </form>
@@ -200,6 +213,9 @@ export default {
     token() {
       return this.$store.getters['app-user/getToken']
     },
+    division() {
+      return this.$store.getters['app-user/getDivision']
+    },
   },
   methods: {
     cancel() {
@@ -220,7 +236,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -235,7 +251,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 this.loading = !this.loading
                 this.error = false
                 if (res.status == 200) {
@@ -250,7 +266,7 @@ export default {
                   })
                 }
               })
-              .catch((e) => {
+              .catch(e => {
                 this.loading = !this.loading
                 const error = e.toJSON()
                 if (error.status == 422) {
@@ -275,14 +291,14 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .post(
                 `/update-profile`,
                 {
                   name: this.userData.name,
-                  bagian: this.userData.name,
+                  division_id: this.userData.division_id,
                 },
                 {
                   headers: {
@@ -290,7 +306,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 this.loadingChange = !this.loadingChange
                 this.error = false
                 if (res.status == 200) {
@@ -305,7 +321,7 @@ export default {
                   })
                 }
               })
-              .catch((e) => {
+              .catch(e => {
                 this.loadingChange = !this.loadingChange
                 const error = e.toJSON()
                 if (error.status == 422) {
@@ -317,6 +333,16 @@ export default {
           }
         })
     },
+    getDivision() {
+      this.$axios.get(`/user/division`).then(res => {
+        if (res.status == 200) {
+          this.$store.commit('app-user/SET_DIVISION', res.data.data)
+        }
+      })
+    },
+  },
+  created() {
+    this.getDivision()
   },
 }
 </script>

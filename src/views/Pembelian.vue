@@ -181,6 +181,7 @@
       >
       <div class="w-1/3">
         <input
+          :disabled="loading"
           v-model="notes"
           type="text"
           class="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -354,9 +355,15 @@ export default {
           },
         })
         .then(res => {
-          console.info(res)
-          this.loading = !this.loading
           if (res.status == 200) {
+            setTimeout(() => {
+              this.$router.push({
+                name: 'detail-pembelian',
+                params: { id: master.id },
+              })
+              this.success()
+              this.loading = !this.loading
+            }, 1000)
           } else if (res.status == 206) {
             this.$swal
               .fire({
@@ -364,6 +371,7 @@ export default {
                 title: res.data.lampiran[0],
               })
               .then(x => {
+                this.loading = !this.loading
                 this.success()
                 this.$router.push({
                   name: 'detail-pembelian',
@@ -409,15 +417,16 @@ export default {
                   )
                   if (this.file !== null) {
                     this.uploadingLampiran(res.data.data)
+                  } else {
+                    setTimeout(() => {
+                      this.$router.push({
+                        name: 'detail-pembelian',
+                        params: { id: res.data.data.id },
+                      })
+                      this.success()
+                      this.loading = !this.loading
+                    }, 1000)
                   }
-                  this.loading = !this.loading
-                  setTimeout(() => {
-                    this.$router.push({
-                      name: 'detail-pembelian',
-                      params: { id: res.data.data.id },
-                    })
-                    this.success()
-                  }, 1000)
                 }
               })
           }

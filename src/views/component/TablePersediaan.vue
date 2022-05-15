@@ -23,11 +23,14 @@
       />
     </vue-final-modal>
     <vue-final-modal
+      :lock-scroll="true"
       :prevent-click="true"
       v-model="showMutationModal"
       name="mutationModal"
       classes="flex justify-center items-center"
-      content-class="flex p-4  max-w-[60%] h-3/4  bg-white rounded-lg shadow dark:bg-gray-700 overflow-scroll"
+      content-class="relative flex flex-col max-h-96 mx-4 p-4 border rounded bg-white max-h-screen "
+      :fit-parent="true"
+      :esc-to-close="true"
     >
       <TableMutation />
     </vue-final-modal>
@@ -390,6 +393,7 @@ export default {
   methods: {
     openMutationModal(x) {
       this.productId = x
+      this.$store.commit('app-mutation/SET_ID', x)
       this.$store.commit('app-mutation/SET_LOADING', true)
       this.getMutation(this.productId)
       this.$vfm.show('mutationModal')
@@ -399,7 +403,7 @@ export default {
       this.baru = true
     },
     ubahData(x) {
-      const b = this.dataTable.data.find((y) => {
+      const b = this.dataTable.data.find(y => {
         if (y.id === x) {
           this.$store.commit('app-product/SET_PRODUCT', y)
           // this.$store.commit('app-product/SET_TEMP_PRODUCT', y)
@@ -418,11 +422,11 @@ export default {
       this.isLoading = !this.isLoading
       this.$axios
         .get(`/product?limit=${this.limit}`)
-        .then((res) => {
+        .then(res => {
           this.isLoading = !this.isLoading
           this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
         })
-        .catch((e) => {
+        .catch(e => {
           this.isLoading = !this.isLoading
           this.dataTable = {}
           const error = e.toJSON()
@@ -435,7 +439,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`/product?limit=${this.limit}&name=${this.searchName}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
 
           this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
@@ -443,7 +447,7 @@ export default {
     },
     limitChange() {
       this.tableLoading = !this.tableLoading
-      this.$axios.get(`/product?limit=${this.limit}`).then((res) => {
+      this.$axios.get(`/product?limit=${this.limit}`).then(res => {
         this.tableLoading = !this.tableLoading
 
         this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
@@ -458,7 +462,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.next_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
 
           this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
@@ -472,7 +476,7 @@ export default {
       this.tableLoading = !this.tableLoading
       this.$axios
         .get(`${this.dataTable.prev_page_url}&limit=${this.limit + params}`)
-        .then((res) => {
+        .then(res => {
           this.tableLoading = !this.tableLoading
 
           this.$store.commit('app-product/SET_LIST_PRODUCT', res.data.data)
@@ -486,7 +490,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-mutation/SET_MUTATION', res.data)
             this.$store.commit('app-mutation/SET_LOADING', false)
@@ -565,7 +569,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-product/SET_TYPE', res.data.data)
           }
@@ -578,7 +582,7 @@ export default {
             Authorization: `${this.token.token_type} ${this.token.access_token}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           if (res.status == 200) {
             this.$store.commit('app-product/SET_UNIT', res.data.data)
           }
