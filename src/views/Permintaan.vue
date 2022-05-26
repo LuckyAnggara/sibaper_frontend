@@ -245,7 +245,7 @@ export default {
   computed: {
     error() {
       let total = 0
-      this.detailRequest.forEach((x) => {
+      this.detailRequest.forEach(x => {
         if (x.real_quantity < x.quantity) {
           total += 1
         }
@@ -290,7 +290,7 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Proses!',
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$axios
               .post(
@@ -306,7 +306,7 @@ export default {
                   },
                 }
               )
-              .then((res) => {
+              .then(res => {
                 this.loading = !this.loading
                 if (res.status == 200) {
                   this.$store.commit(
@@ -320,7 +320,7 @@ export default {
                   })
                 }
               })
-              .catch((e) => {
+              .catch(e => {
                 this.loading = !this.loading
                 const error = e.toJSON()
               })
@@ -333,9 +333,9 @@ export default {
       this.detailRequest.splice(index, 1)
     },
     pilihItem(data) {
-      const b = this.detailRequest.find((d) => d.id === data.id)
+      const b = this.detailRequest.find(d => d.id === data.id)
       if (b) {
-        const index = this.detailRequest.findIndex((d) => d.id === data.id)
+        const index = this.detailRequest.findIndex(d => d.id === data.id)
         this.detailRequest[index].quantity += 1
       } else {
         this.detailRequest.push({
@@ -356,10 +356,10 @@ export default {
       } else {
         this.$axios
           .get(`/product?name=${string}`)
-          .then((res) => {
+          .then(res => {
             this.dataProduct = res.data.data.data
           })
-          .catch((e) => {
+          .catch(e => {
             this.dataProduct = null
           })
       }

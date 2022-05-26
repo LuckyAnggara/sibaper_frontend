@@ -322,18 +322,43 @@ export default {
     userData() {
       return this.$store.getters['app-user/getUserData']
     },
+    token() {
+      return this.$store.getters['app-user/getToken']
+    },
   },
   methods: {
     openLoginModal() {
       this.$vfm.show('loginModal')
     },
     logout() {
-      localStorage.removeItem('userData')
-      localStorage.removeItem('token')
-      this.$store.commit('app-user/SET_USER_DATA')
-      this.$store.commit('app-user/SET_TOKEN')
-      // Redirect to login page
-      this.$router.push({ name: 'home' })
+      this.$axios
+        .post(
+          `/logout`,
+          {},
+          {
+            headers: {
+              Authorization: `${this.token.token_type} ${this.token.access_token}`,
+            },
+          }
+        )
+        .then(response => {
+          if (response.status == 200) {
+            localStorage.removeItem('userData')
+            localStorage.removeItem('token')
+            this.$store.commit('app-user/SET_USER_DATA')
+            this.$store.commit('app-user/SET_TOKEN')
+            // Redirect to login page
+            this.$router.push({ name: 'login' })
+
+            // this.$toast.open({
+            //   message: `Berhasil logout`,
+            //   type: 'success',
+            //   duration: 3000,
+            //   position: 'top',
+            //   dismissible: true,
+            // })
+          }
+        })
     },
   },
   created() {
