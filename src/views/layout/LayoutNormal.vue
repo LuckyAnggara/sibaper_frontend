@@ -331,34 +331,48 @@ export default {
       this.$vfm.show('loginModal')
     },
     logout() {
-      this.$axios
-        .post(
-          `/logout`,
-          {},
-          {
-            headers: {
-              Authorization: `${this.token.token_type} ${this.token.access_token}`,
-            },
-          }
-        )
-        .then(response => {
-          if (response.status == 200) {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('token')
-            this.$store.commit('app-user/SET_USER_DATA')
-            this.$store.commit('app-user/SET_TOKEN')
-            // Redirect to login page
-            this.$router.push({ name: 'login' })
+      localStorage.removeItem('userData')
+      localStorage.removeItem('token')
+      this.$store.commit('app-user/SET_USER_DATA')
+      this.$store.commit('app-user/SET_TOKEN')
+      // Redirect to login page
+      this.$router.push({ name: 'login' })
 
-            // this.$toast.open({
-            //   message: `Berhasil logout`,
-            //   type: 'success',
-            //   duration: 3000,
-            //   position: 'top',
-            //   dismissible: true,
-            // })
-          }
-        })
+      this.$toast.open({
+        message: `Berhasil logout`,
+        type: 'success',
+        duration: 3000,
+        position: 'top',
+        dismissible: true,
+      })
+      // this.$axios
+      //   .post(
+      //     `/logout`,
+      //     {},
+      //     {
+      //       headers: {
+      //         Authorization: `${this.token.token_type} ${this.token.access_token}`,
+      //       },
+      //     }
+      //   )
+      //   .then(response => {
+      //     if (response.status == 200) {
+      //       localStorage.removeItem('userData')
+      //       localStorage.removeItem('token')
+      //       this.$store.commit('app-user/SET_USER_DATA')
+      //       this.$store.commit('app-user/SET_TOKEN')
+      //       // Redirect to login page
+      //       this.$router.push({ name: 'login' })
+
+      //       this.$toast.open({
+      //         message: `Berhasil logout`,
+      //         type: 'success',
+      //         duration: 3000,
+      //         position: 'top',
+      //         dismissible: true,
+      //       })
+      //     }
+      //   })
     },
   },
   created() {
