@@ -371,6 +371,21 @@ export default {
               position: 'top',
               dismissible: true,
             })
+          } else if (response.status == 401) {
+            localStorage.removeItem('userData')
+            localStorage.removeItem('token')
+            this.$store.commit('app-user/SET_USER_DATA')
+            this.$store.commit('app-user/SET_TOKEN')
+            // Redirect to login page
+            this.$router.push({ name: 'login' })
+
+            this.$toast.open({
+              message: `Anda tidak punya otorisasi`,
+              type: 'error',
+              duration: 3000,
+              position: 'top',
+              dismissible: true,
+            })
           }
         })
     },
