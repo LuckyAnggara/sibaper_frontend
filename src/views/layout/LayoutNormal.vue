@@ -372,6 +372,12 @@ export default {
               dismissible: true,
             })
           } else if (response.status == 401) {
+
+          }
+        }).catch((e) => {
+          this.loading = !this.loading
+          const error = e.toJSON()
+          if (error.status == '401') {
             localStorage.removeItem('userData')
             localStorage.removeItem('token')
             this.$store.commit('app-user/SET_USER_DATA')
@@ -387,7 +393,9 @@ export default {
               dismissible: true,
             })
           }
+          this.loginLoading = !this.loginLoading
         })
+    },
     },
   },
   created() {
