@@ -2,7 +2,7 @@
   <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
     <div class="flex justify-end p-2">
       <button
-        @click="$vfm.hide('newItemModal')"
+        @click="batal"
         :disabled="isLoading"
         type="button"
         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
@@ -27,74 +27,21 @@
       @submit.prevent="submit"
     >
       <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-        Tambah data baru
+        Ubah data
       </h3>
       <div>
         <label
           for="email"
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Nama item</label
+          >Nama jenis</label
         >
         <input
-          v-model="name"
+          v-model="type.name"
           :disabled="isLoading"
           type="text"
-          id="email"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
           placeholder=""
           required
-        />
-      </div>
-
-      <div>
-        <label
-          for="desc"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Jenis</label
-        >
-        <select
-          required
-          v-model="type_id"
-          id="countries"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        >
-          <option v-for="item in type" :key="item.id" :value="item.id">
-            {{ item.name }}
-          </option>
-        </select>
-      </div>
-
-      <div>
-        <label
-          for="desc"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Satuan</label
-        >
-        <select
-          required
-          v-model="unit_id"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        >
-          <option v-for="item in unit" :key="item.id" :value="item.id">
-            {{ item.name }}
-          </option>
-        </select>
-      </div>
-
-      <div>
-        <label
-          for="desc"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Description</label
-        >
-        <textarea
-          :disabled="isLoading"
-          v-model="desc"
-          type="text"
-          name="desc"
-          id="password"
-          placeholder=""
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
         />
       </div>
 
@@ -129,10 +76,6 @@
       >
         Submit
       </button>
-      <div class="text-xs font-medium text-gray-500 dark:text-gray-300">
-        Persediaan awal Item ini adalah 0 <br />
-        Silahkan ubah jumlah persediaan di tombol quantity
-      </div>
     </form>
   </div>
 </template>
@@ -141,44 +84,31 @@
 export default {
   data() {
     return {
-      name: null,
-      desc: null,
       isLoading: false,
-      type_id: null,
-      unit_id: null,
-      limit:
-        localStorage.getItem('limit') === ('' || null)
-          ? 5
-          : localStorage.getItem('limit'),
     }
   },
-
   computed: {
     userData() {
       return this.$store.getters['app-user/getUserData']
     },
     type() {
-      return this.$store.getters['app-product/getType']
-    },
-    unit() {
-      return this.$store.getters['app-product/getUnit']
+      return this.$store.getters['app-product/getTypeChoose']
     },
     token() {
       return this.$store.getters['app-user/getToken']
     },
   },
+
   methods: {
     submit() {
       this.$emit('isModalLoading', true)
       this.isLoading = !this.isLoading
       this.$axios
-        .post(
-          `/product/store`,
+        .put(
+          `/type/update`,
           {
-            name: this.name,
-            desc: this.desc,
-            type: this.type_id,
-            unit: this.unit_id,
+            id: this.type.id,
+            name: this.type.name,
           },
           {
             headers: {
@@ -188,19 +118,20 @@ export default {
         )
         .then(res => {
           if (res.status === 200) {
-            this.name = null
-            this.desc = null
-            this.$emit('newItem')
             this.isLoading = !this.isLoading
             this.$emit('isModalLoading', false)
-            this.$vfm.hide('newItemModal')
+            this.$vfm.hide('ubahJenisModal')
           }
         })
         .catch(e => {
           this.isLoading = !this.isLoading
           this.$emit('isModalLoading', false)
-          const error = e.toJSON()
+          this.$vfm.hide('ubahJenisModal')
         })
+    },
+    batal() {
+      this.$emit('refreshData')
+      this.$vfm.hide('ubahJenisModal')
     },
   },
 }

@@ -344,7 +344,14 @@ export default {
               .then(res => {
                 this.loading = !this.loading
                 if (res.status == 200) {
-                  this.success(item)
+                  this.$swal({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Data telah dihapus',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast: true,
+                  })
                   this.getData()
                 }
               })

@@ -1,5 +1,6 @@
 // IMPORT HALAMAN
 import OutputRequest from './views/component/OutputRequest.vue'
+import DataJenis from './views/DataJenis.vue'
 import Permintaan from './views/Permintaan.vue'
 import Home from './views/Home.vue'
 import Pembelian from './views/Pembelian.vue'
@@ -88,6 +89,15 @@ export const routes = [
     component: Persediaan,
     meta: {
       title: 'Data Persediaan',
+      layout: 'layout-normal',
+    },
+  },
+  {
+    path: '/daftar-data-jenis',
+    name: 'daftar-data-jenis',
+    component: DataJenis,
+    meta: {
+      title: 'Data Jenis',
       layout: 'layout-normal',
     },
   },

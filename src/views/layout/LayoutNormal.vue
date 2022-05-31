@@ -371,10 +371,9 @@ export default {
               position: 'top',
               dismissible: true,
             })
-          } else if (response.status == 401) {
-
           }
-        }).catch((e) => {
+        })
+        .catch(e => {
           this.loading = !this.loading
           const error = e.toJSON()
           if (error.status == '401') {
@@ -395,7 +394,6 @@ export default {
           }
           this.loginLoading = !this.loginLoading
         })
-    },
     },
   },
   created() {

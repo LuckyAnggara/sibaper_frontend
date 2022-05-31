@@ -101,6 +101,27 @@
 
           <div class="ml-5 relative sm:rounded-lg grid w-full items-end">
             <button
+              @click="toDataJenis"
+              type="button"
+              class="text-white justify-self-end bg-amber-400 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              <svg
+                class="w-5 h-5 mr-2 -ml-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"
+                />
+              </svg>
+
+              Data Jenis
+            </button>
+          </div>
+
+          <div class="ml-5 relative sm:rounded-lg grid w-full items-end">
+            <button
               @click="openNewItemModal"
               type="button"
               class="text-white justify-self-end bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -116,7 +137,7 @@
                 />
               </svg>
 
-              Tambah
+              Tambah Persediaan
             </button>
           </div>
         </div>
@@ -391,6 +412,11 @@ export default {
     },
   },
   methods: {
+    toDataJenis() {
+      this.$router.push({
+        name: 'daftar-data-jenis',
+      })
+    },
     openMutationModal(x) {
       this.productId = x
       this.$store.commit('app-mutation/SET_ID', x)
